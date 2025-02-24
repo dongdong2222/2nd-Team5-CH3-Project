@@ -2,13 +2,32 @@
 
 
 #include "Controller/Player/NightPlayerController.h"
+#include "EnhancedInputSubsystems.h"
 
 ANightPlayerController::ANightPlayerController()
 {
-	playerTeamId = FGenericTeamId(0);
+  playerTeamId = FGenericTeamId(0);
+}
+
+void ANightPlayerController::BeginPlay()
+{
+  SetInputMapping(DefaultMappingContext);
 }
 
 FGenericTeamId ANightPlayerController::GetGenericTeamId() const
 {
-	return playerTeamId;
+  return playerTeamId;
+}
+
+void ANightPlayerController::SetInputMapping(const UInputMappingContext* MappingContext)
+{
+  ULocalPlayer* LocalPlayer = GetLocalPlayer();
+  if (!LocalPlayer) return;
+  UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+  if (!Subsystem) return;
+
+  if (MappingContext)
+  {
+    Subsystem->AddMappingContext(MappingContext, 0);
+  }
 }

@@ -17,7 +17,8 @@ public class Team5_Project : ModuleRules
 			"EnhancedInput", 
 			"AIModule",
 			"MotionWarping",
-			"AnimGraphRuntime"
+			"AnimGraphRuntime",
+			"GameplayTags"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

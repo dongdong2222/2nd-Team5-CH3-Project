@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "AnimInstance/NightEnemyAnimInstance.h"
+#include "AnimInstance/Enemy/NightEnemyAnimInstance.h"
 
 #include "KismetAnimationLibrary.h"
 #include "Character/NightCharacterBase.h"
