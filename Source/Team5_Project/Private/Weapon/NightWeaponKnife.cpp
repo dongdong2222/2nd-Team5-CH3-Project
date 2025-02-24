@@ -1,4 +1,4 @@
-
+Ôªø
 #include "Weapon/NightWeaponKnife.h"
 
 ANightWeaponKnife::ANightWeaponKnife()
@@ -10,9 +10,9 @@ ANightWeaponKnife::ANightWeaponKnife()
 	Zoomtimes = 1;
 }
 
-//±«√— ¥‹πﬂ
+//Í∂åÏ¥ù Îã®Î∞ú
 void ANightWeaponKnife::Fire()
 {
-	//delay∏∏ √ﬂ∞°
+	//delayÎßå Ï∂îÍ∞Ä
 
 }

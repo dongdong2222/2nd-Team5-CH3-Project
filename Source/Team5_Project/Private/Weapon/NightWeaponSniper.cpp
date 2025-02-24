@@ -1,4 +1,4 @@
-
+ï»¿
 #include "Weapon/NightWeaponSniper.h"
 
 
@@ -11,7 +11,7 @@ ANightWeaponSniper::ANightWeaponSniper()
 	Zoomtimes = 3;
 }
 
-//½º³ªÀÌÆÛ ´Ü¹ß
+//ìŠ¤ë‚˜ì´í¼ ë‹¨ë°œ
 void ANightWeaponSniper::Fire()
 {
 	if (CurrentBullet == 0)
@@ -24,7 +24,7 @@ void ANightWeaponSniper::Fire()
 		CurrentBullet--;
 		UE_LOG(LogTemp, Error, TEXT("Ammo:%d"), CurrentBullet);
 	}
-	//delay Ãß°¡?
+	//delay ì¶”ê°€?
 }
 
 
@@ -35,10 +35,10 @@ void ANightWeaponSniper::Reload()
 
 void ANightWeaponSniper::ZoomIn()
 {
-	//Ä³¸¯ÅÍÀÇ Ä«¸Ş¶ó ÄÄÆ÷³ÍÆ®ÀÇ transform °ª ÀÌ¿ë
+	//ìºë¦­í„°ì˜ ì¹´ë©”ë¼ ì»´í¬ë„ŒíŠ¸ì˜ transform ê°’ ì´ìš©
 }
 
 void ANightWeaponSniper::ZoomOut()
 {
-	//Ä³¸¯ÅÍÀÇ Ä«¸Ş¶ó ÄÄÆ÷³ÍÆ®ÀÇ transform °ª ÀÌ¿ë
+	//ìºë¦­í„°ì˜ ì¹´ë©”ë¼ ì»´í¬ë„ŒíŠ¸ì˜ transform ê°’ ì´ìš©
 }

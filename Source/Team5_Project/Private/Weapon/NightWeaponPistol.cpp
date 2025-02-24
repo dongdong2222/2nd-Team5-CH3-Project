@@ -1,4 +1,4 @@
-#include "Weapon/NightWeaponPistol.h"
+Ôªø#include "Weapon/NightWeaponPistol.h"
 
 ANightWeaponPistol::ANightWeaponPistol()
 {
@@ -9,7 +9,7 @@ ANightWeaponPistol::ANightWeaponPistol()
 	Zoomtimes = 1;
 }
 
-//±«√— ¥‹πﬂ
+//Í∂åÏ¥ù Îã®Î∞ú
 void ANightWeaponPistol::Fire()
 {
 	if (CurrentBullet == 0)

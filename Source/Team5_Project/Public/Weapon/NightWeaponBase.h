@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -19,7 +19,7 @@ public:
 	FTimerHandle timer;
 	float Range;
 
-	//¹èÀ²
+	//ë°°ìœ¨
 	int32 Zoomtimes;
 
 protected:

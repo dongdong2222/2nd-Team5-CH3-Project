@@ -1,4 +1,4 @@
-
+Ôªø
 #include "Weapon/NightWeaponRifle.h"
 
 ANightWeaponRifle::ANightWeaponRifle()
@@ -10,7 +10,7 @@ ANightWeaponRifle::ANightWeaponRifle()
 	Zoomtimes = 1;
 }
 
-//∂Û¿Ã«√ ø¨ªÁ
+//ÎùºÏù¥Ìîå Ïó∞ÏÇ¨
 void ANightWeaponRifle::Fire()
 {
 	if (CurrentBullet == 0)

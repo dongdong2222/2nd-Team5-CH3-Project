@@ -1,4 +1,4 @@
-#include "Weapon/NightWeaponBase.h"
+﻿#include "Weapon/NightWeaponBase.h"
 
 ANightWeaponBase::ANightWeaponBase()
 {
