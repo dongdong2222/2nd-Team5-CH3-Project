@@ -8,6 +8,7 @@
 #include "NightPlayerCharacter.generated.h"
 
 struct FInputActionValue;
+class ANightWeaponBase;
 /**
  * 
  */
@@ -22,11 +23,24 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	UAnimMontage* RollingMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	TSubclassOf<UAnimInstance> Pistol;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	TSubclassOf<UAnimInstance> Rifle;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	TSubclassOf<UAnimInstance> Shotgun;
+
 public:
 	ANightPlayerCharacter();
 	//~APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//End of ~APawn interface
+
+private:
+	TArray<TSubclassOf<ANightWeaponBase>> QuickSlot;
+	int32 CurrentSlot;
 
 private:
 	//InputAction
@@ -41,6 +55,7 @@ private:
 	void Reload(const FInputActionValue& Value);
 	void Aim(const FInputActionValue& Value);
 	void Shot(const FInputActionValue& Value);
+	void SwitchWeapon(const FInputActionValue& Value);
 	// - ±‚≈∏
 	void ESC(const FInputActionValue& Value);
 	void UsePotion(const FInputActionValue& Value);
@@ -50,5 +65,8 @@ private:
 
 	void SetFirstPersonView();
 	void SetThirdPersonView();
+
+	void SetWeaponToPlayerHand();
+	void AddToCurrentSlot(float value);
 	
 };

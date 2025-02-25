@@ -7,9 +7,14 @@
 #include "DataAsset/NightPlayerDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "State/NightPlayerState.h"
+#include "Weapon/NightWeaponBase.h"
 
 ANightPlayerCharacter::ANightPlayerCharacter()
 {
+  //initialize QuickSlot
+  QuickSlot.SetNum(3);
+
+
 }
 
 void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -43,6 +48,12 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     ETriggerEvent::Triggered,
     this,
     &ThisClass::Rolling
+  );
+  EnhancedInput->BindAction(
+    PlayerController->SwitchWeaponAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::SwitchWeapon
   );
 }
 
@@ -123,6 +134,21 @@ void ANightPlayerCharacter::Shot(const FInputActionValue& Value)
   //TODO : Gun->Fire();
 }
 
+void ANightPlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
+{
+  float SwitchInput = Value.Get<float>();
+  if (SwitchInput > 0) {
+    AddToCurrentSlot(1);
+  }
+  else
+  {
+    AddToCurrentSlot(-1);
+  }
+  //TODO : AnimMontage Play로 바꾸기
+  SetWeaponToPlayerHand();
+
+}
+
 void ANightPlayerCharacter::ESC(const FInputActionValue& Value)
 {
   //TODO : ESC창 열린 후, 커서 움직이게 바뀜
@@ -158,4 +184,34 @@ void ANightPlayerCharacter::SetFirstPersonView()
 
 void ANightPlayerCharacter::SetThirdPersonView()
 {
+}
+
+void ANightPlayerCharacter::SetWeaponToPlayerHand()
+{
+  ANightWeaponBase* Weapon = GetWorld()->SpawnActor<ANightWeaponBase>(
+    QuickSlot[CurrentSlot],
+    FVector::ZeroVector,
+    FRotator::ZeroRotator
+  );
+  Weapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  if (!Anim) return;
+  GetMesh()->LinkAnimClassLayers(Pistol);
+}
+
+void ANightPlayerCharacter::AddToCurrentSlot(float value)
+{
+  int32 Temp = CurrentSlot + value;
+  if (Temp >= QuickSlot.Num())
+  {
+    CurrentSlot = 0;
+  }
+  else if (Temp < 0)
+  {
+    CurrentSlot = QuickSlot.Num() - 1;
+  }
+  else
+  {
+    CurrentSlot = Temp;
+  }
 }
