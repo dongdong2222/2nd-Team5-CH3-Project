@@ -6,6 +6,7 @@
 #include "Controller/Player/NightPlayerController.h"
 #include "DataAsset/NightPlayerDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "State/NightPlayerState.h"
 
 ANightPlayerCharacter::ANightPlayerCharacter()
 {
@@ -130,6 +131,13 @@ void ANightPlayerCharacter::ESC(const FInputActionValue& Value)
 void ANightPlayerCharacter::UsePotion(const FInputActionValue& Value)
 {
   //TODO : 포션 사용
+  UNightPlayerDataAsset* PlayerStatData = Cast<UNightPlayerDataAsset>(StatData);
+  if (!PlayerStatData) return;
+  FHealPotionData HealPotionData= PlayerStatData->GetHealPotionData();
+  if (HealPotionData.Use())
+  {
+    PlayerStatData->SetHealth(PlayerStatData->GetHealth() + HealPotionData.HealAmount);
+  }
 }
 
 void ANightPlayerCharacter::Throw(const FInputActionValue& Value)

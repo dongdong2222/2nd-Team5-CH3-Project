@@ -52,3 +52,13 @@ void UNightPlayerDataAsset::SetDashCost(float value)
 {
   DashCost = value;
 }
+
+FHealPotionData UNightPlayerDataAsset::GetHealPotionData() const
+{
+  return HealPotionData;
+}
+
+void UNightPlayerDataAsset::SetHealPotionData(FHealPotionData value)
+{
+  HealPotionData = value;
+}

@@ -6,6 +6,35 @@
 #include "DataAsset/NightCharacterDataAsset.h"
 #include "NightPlayerDataAsset.generated.h"
 
+USTRUCT(BlueprintType)
+struct FHealPotionData
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, Category = "HealPotion")
+	int32 MaxHealPotionCount;
+	UPROPERTY(EditAnywhere, Category = "HealPotion")
+	int32 CurrentHealPotionCount;
+	UPROPERTY(EditAnywhere, Category = "HealPotion")
+	float HealAmount;
+
+	bool Use() 
+	{
+		if (CurrentHealPotionCount <= 0)
+		{
+			return false;
+		}
+		else
+		{
+			CurrentHealPotionCount--;
+			return true;
+		}
+	}
+	void Fill()
+	{
+		CurrentHealPotionCount = MaxHealPotionCount;
+	}
+};
+
 /**
  * 
  */
@@ -29,6 +58,9 @@ public:
 	float GetDashCost() const;
 	void SetDashCost(float value);
 
+	FHealPotionData GetHealPotionData() const;
+	void SetHealPotionData(FHealPotionData value);
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float Stemina;
@@ -44,5 +76,8 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float DashCost;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FHealPotionData HealPotionData;
 	
 };
