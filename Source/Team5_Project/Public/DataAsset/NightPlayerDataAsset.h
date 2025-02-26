@@ -61,6 +61,9 @@ public:
 	FHealPotionData GetHealPotionData() const;
 	void SetHealPotionData(FHealPotionData value);
 
+	float GetRollingDistance() const;
+	void SetRollingDistance(float value);
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float Stemina;
@@ -80,4 +83,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FHealPotionData HealPotionData;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float RollingDistance;
 };

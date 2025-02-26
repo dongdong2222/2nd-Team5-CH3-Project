@@ -8,14 +8,17 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "State/NightPlayerState.h"
 #include "Weapon/NightWeaponBase.h"
+#include "DataAsset/FPlayerItemDataRow.h"
+#include "MotionWarpingComponent.h"
+//#include "AnimInstance/Player/NightPlayerAnimInstance.h"
 
 ANightPlayerCharacter::ANightPlayerCharacter()
 {
   //initialize QuickSlot
   QuickSlot.SetNum(3);
-
-
+  CurrentSlot = 0;
 }
+
 
 void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -115,6 +118,21 @@ void ANightPlayerCharacter::Rolling(const FInputActionValue& Value)
   //TODO : 원하는 방향으로 일정거리 구르기, 구르는 동안 타격받지 않음
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
   if (!Anim) return;
+
+  FVector TargetLocation = GetCharacterMovement()->Velocity;
+  if (TargetLocation.IsNearlyZero())
+  {
+    TargetLocation = GetActorForwardVector();
+  }
+  FRotator PrevRotation = GetActorRotation();
+  FRotator TargetRotation = TargetLocation.Rotation();
+  TargetLocation.Normalize();
+  TargetLocation = GetActorLocation() + TargetLocation * Cast<UNightPlayerDataAsset>(StatData)->GetRollingDistance();
+  
+
+  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocation("RollTargetLocation", TargetLocation);
+  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollTargetRotation", TargetLocation, TargetRotation);
+  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollEndRotation", TargetLocation, PrevRotation);
   Anim->Montage_Play(RollingMontage);
   //Anim->OnMontageEnded.AddDynamic(this, Montage);
 }
@@ -144,9 +162,19 @@ void ANightPlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
   {
     AddToCurrentSlot(-1);
   }
-  //TODO : AnimMontage Play로 바꾸기
-  SetWeaponToPlayerHand();
 
+  PrevWeapon = CurrentWeapon;
+  CurrentWeapon = GetWorld()->SpawnActor<ANightWeaponBase>(
+    QuickSlot[CurrentSlot],
+    FVector::ZeroVector,
+    FRotator::ZeroRotator
+  );
+  CurrentWeapon->SetActorHiddenInGame(true);
+  
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  if (!Anim) return;
+  Anim->Montage_Play(CurrentWeapon->EqipMontage);
+  Anim->LinkAnimClassLayers(CurrentWeapon->AnimLayer);
 }
 
 void ANightPlayerCharacter::ESC(const FInputActionValue& Value)
@@ -188,15 +216,15 @@ void ANightPlayerCharacter::SetThirdPersonView()
 
 void ANightPlayerCharacter::SetWeaponToPlayerHand()
 {
-  ANightWeaponBase* Weapon = GetWorld()->SpawnActor<ANightWeaponBase>(
-    QuickSlot[CurrentSlot],
-    FVector::ZeroVector,
-    FRotator::ZeroRotator
-  );
-  Weapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
   if (!Anim) return;
-  GetMesh()->LinkAnimClassLayers(Pistol);
+  if (PrevWeapon)
+  {
+    PrevWeapon->Destroy();
+  }
+
+  CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
+  CurrentWeapon->SetActorHiddenInGame(false);
 }
 
 void ANightPlayerCharacter::AddToCurrentSlot(float value)

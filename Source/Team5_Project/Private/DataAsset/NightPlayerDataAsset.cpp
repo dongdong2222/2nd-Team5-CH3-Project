@@ -62,3 +62,13 @@ void UNightPlayerDataAsset::SetHealPotionData(FHealPotionData value)
 {
   HealPotionData = value;
 }
+
+float UNightPlayerDataAsset::GetRollingDistance() const
+{
+    return RollingDistance;
+}
+
+void UNightPlayerDataAsset::SetRollingDistance(float value)
+{
+  RollingDistance = value;
+}
