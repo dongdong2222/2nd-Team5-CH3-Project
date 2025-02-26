@@ -13,15 +13,6 @@ class TEAM5_PROJECT_API ANightWeaponBase : public AActor,public INightWeaponInte
 public:	
 	ANightWeaponBase();
 
-
-	//Add Dongju
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "weapon | Animation")
-	TSubclassOf<UAnimInstance> AnimLayer;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "weapon | Animation")
-	UAnimMontage* EqipMontage;
-	//End of Add Dongju
-
 	int32 MaxBullet;
 	int32 CurrentBullet;
 	bool isFiring = true;
@@ -41,9 +32,6 @@ protected:
 	USceneComponent* Scene;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "weapon|Component")
 	USkeletalMeshComponent* SkeletalMesh;
-
-
-
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual void Fire();

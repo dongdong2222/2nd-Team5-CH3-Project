@@ -46,9 +46,6 @@ public:
 	UInputAction* ShotAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	UInputAction* SwitchWeaponAction;
-
-	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* ESCAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
