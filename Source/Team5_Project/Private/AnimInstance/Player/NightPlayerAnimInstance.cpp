@@ -33,6 +33,18 @@ void UNightPlayerAnimInstance::UpdateRotation()
   if (!Character->GetController()) return;
   ControllerRotation = Character->GetController()->GetControlRotation();
   DeltaRotation = UKismetMathLibrary::NormalizedDeltaRotator(ControllerRotation, WorldRotation);
+  //Pitch Normalize
+  double Pitch = ControllerRotation.Pitch;
+  Pitch = FMath::Fmod(Pitch + 180.f, 360.f);
+  if (Pitch < 0.f) Pitch += 360.f;
+  Pitch -= 180.f;
+  //Yaw Normalize
+  double Yaw = ControllerRotation.Yaw;
+  Yaw = FMath::Fmod(Yaw + 180.f, 360.f);
+  if (Yaw < 0.f) Yaw += 360.f;
+  Yaw -= 180.f;
+  RotationForAim = FRotator(Pitch, Yaw, ControllerRotation.Roll);
+
 }
 
 void UNightPlayerAnimInstance::UpdateVelocity()
