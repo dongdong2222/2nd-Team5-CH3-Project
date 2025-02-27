@@ -51,8 +51,17 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Misc")
 	FVector HammerVelocity;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Emitter")
+	UParticleSystem* GhostHandParticleSystem;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
+	float DamageAmount;
+
 	
 	ANightSevarog();
 
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void Fire_SoulSiphon();
 	
 };
