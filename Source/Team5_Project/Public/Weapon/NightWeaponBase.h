@@ -18,7 +18,7 @@ public:
 	bool isFiring = true;
 	FTimerHandle timer;
 	float Range;
-
+	float FireDelay;
 	//배율
 	int32 Zoomtimes;
 
@@ -34,7 +34,12 @@ protected:
 	USkeletalMeshComponent* SkeletalMesh;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void Fire();
-
+	void Fire();
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void StartFire();
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void StopFire();
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void Reload();
 
 };
