@@ -6,10 +6,19 @@
 #include "Controller/Player/NightPlayerController.h"
 #include "DataAsset/NightPlayerDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "State/NightPlayerState.h"
+#include "Weapon/NightWeaponBase.h"
+#include "DataAsset/FPlayerItemDataRow.h"
+#include "MotionWarpingComponent.h"
+//#include "AnimInstance/Player/NightPlayerAnimInstance.h"
 
 ANightPlayerCharacter::ANightPlayerCharacter()
 {
+  //initialize QuickSlot
+  QuickSlot.SetNum(3);
+  CurrentSlot = 0;
 }
+
 
 void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -42,6 +51,12 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     ETriggerEvent::Triggered,
     this,
     &ThisClass::Rolling
+  );
+  EnhancedInput->BindAction(
+    PlayerController->SwitchWeaponAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::SwitchWeapon
   );
 }
 
@@ -103,6 +118,21 @@ void ANightPlayerCharacter::Rolling(const FInputActionValue& Value)
   //TODO : 원하는 방향으로 일정거리 구르기, 구르는 동안 타격받지 않음
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
   if (!Anim) return;
+
+  FVector TargetLocation = GetCharacterMovement()->Velocity;
+  if (TargetLocation.IsNearlyZero())
+  {
+    TargetLocation = GetActorForwardVector();
+  }
+  FRotator PrevRotation = GetActorRotation();
+  FRotator TargetRotation = TargetLocation.Rotation();
+  TargetLocation.Normalize();
+  TargetLocation = GetActorLocation() + TargetLocation * Cast<UNightPlayerDataAsset>(StatData)->GetRollingDistance();
+  
+
+  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocation("RollTargetLocation", TargetLocation);
+  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollTargetRotation", TargetLocation, TargetRotation);
+  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollEndRotation", TargetLocation, PrevRotation);
   Anim->Montage_Play(RollingMontage);
   //Anim->OnMontageEnded.AddDynamic(this, Montage);
 }
@@ -122,6 +152,31 @@ void ANightPlayerCharacter::Shot(const FInputActionValue& Value)
   //TODO : Gun->Fire();
 }
 
+void ANightPlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
+{
+  float SwitchInput = Value.Get<float>();
+  if (SwitchInput > 0) {
+    AddToCurrentSlot(1);
+  }
+  else
+  {
+    AddToCurrentSlot(-1);
+  }
+
+  PrevWeapon = CurrentWeapon;
+  CurrentWeapon = GetWorld()->SpawnActor<ANightWeaponBase>(
+    QuickSlot[CurrentSlot],
+    FVector::ZeroVector,
+    FRotator::ZeroRotator
+  );
+  CurrentWeapon->SetActorHiddenInGame(true);
+  
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  if (!Anim) return;
+  Anim->Montage_Play(CurrentWeapon->EqipMontage);
+  Anim->LinkAnimClassLayers(CurrentWeapon->AnimLayer);
+}
+
 void ANightPlayerCharacter::ESC(const FInputActionValue& Value)
 {
   //TODO : ESC창 열린 후, 커서 움직이게 바뀜
@@ -130,6 +185,13 @@ void ANightPlayerCharacter::ESC(const FInputActionValue& Value)
 void ANightPlayerCharacter::UsePotion(const FInputActionValue& Value)
 {
   //TODO : 포션 사용
+  UNightPlayerDataAsset* PlayerStatData = Cast<UNightPlayerDataAsset>(StatData);
+  if (!PlayerStatData) return;
+  FHealPotionData HealPotionData= PlayerStatData->GetHealPotionData();
+  if (HealPotionData.Use())
+  {
+    PlayerStatData->SetHealth(PlayerStatData->GetHealth() + HealPotionData.HealAmount);
+  }
 }
 
 void ANightPlayerCharacter::Throw(const FInputActionValue& Value)
@@ -150,4 +212,34 @@ void ANightPlayerCharacter::SetFirstPersonView()
 
 void ANightPlayerCharacter::SetThirdPersonView()
 {
+}
+
+void ANightPlayerCharacter::SetWeaponToPlayerHand()
+{
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  if (!Anim) return;
+  if (PrevWeapon)
+  {
+    PrevWeapon->Destroy();
+  }
+
+  CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
+  CurrentWeapon->SetActorHiddenInGame(false);
+}
+
+void ANightPlayerCharacter::AddToCurrentSlot(float value)
+{
+  int32 Temp = CurrentSlot + value;
+  if (Temp >= QuickSlot.Num())
+  {
+    CurrentSlot = 0;
+  }
+  else if (Temp < 0)
+  {
+    CurrentSlot = QuickSlot.Num() - 1;
+  }
+  else
+  {
+    CurrentSlot = Temp;
+  }
 }
