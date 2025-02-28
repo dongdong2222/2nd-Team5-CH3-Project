@@ -13,21 +13,12 @@ class TEAM5_PROJECT_API ANightWeaponBase : public AActor,public INightWeaponInte
 public:	
 	ANightWeaponBase();
 
-
-	//Add Dongju
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "weapon | Animation")
-	TSubclassOf<UAnimInstance> AnimLayer;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "weapon | Animation")
-	UAnimMontage* EqipMontage;
-	//End of Add Dongju
-
 	int32 MaxBullet;
 	int32 CurrentBullet;
 	bool isFiring = true;
 	FTimerHandle timer;
 	float Range;
-
+	float FireDelay;
 	//배율
 	int32 Zoomtimes;
 
@@ -42,11 +33,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "weapon|Component")
 	USkeletalMeshComponent* SkeletalMesh;
 
-
-
-
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void Fire();
-
+	void Fire();
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void StartFire();
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void StopFire();
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void Reload();
 
 };

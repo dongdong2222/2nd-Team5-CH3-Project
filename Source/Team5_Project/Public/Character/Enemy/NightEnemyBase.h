@@ -55,7 +55,7 @@ public:
 
 	// Collision
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
-	UShapeComponent* CollisionComponent;
+	UBoxComponent* CollisionBox;
 
 	// Combat
 	UPROPERTY(BlueprintAssignable, Category = "Combat")

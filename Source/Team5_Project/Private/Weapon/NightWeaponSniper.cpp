@@ -9,29 +9,9 @@ ANightWeaponSniper::ANightWeaponSniper()
 	WeaponType = "Sniper";
 	Range = 5000.0f;
 	Zoomtimes = 3;
+	FireDelay = 2.0f;
 }
 
-//스나이퍼 단발
-void ANightWeaponSniper::Fire()
-{
-	if (CurrentBullet == 0)
-	{
-		UE_LOG(LogTemp, Error, TEXT("No Ammo"));
-	}
-
-	if (CurrentBullet != 0)
-	{
-		CurrentBullet--;
-		UE_LOG(LogTemp, Error, TEXT("Ammo:%d"), CurrentBullet);
-	}
-	//delay 추가?
-}
-
-
-void ANightWeaponSniper::Reload()
-{
-	CurrentBullet = MaxBullet;
-}
 
 void ANightWeaponSniper::ZoomIn()
 {

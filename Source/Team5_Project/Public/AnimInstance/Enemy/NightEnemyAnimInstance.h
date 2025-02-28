@@ -25,36 +25,21 @@ public:
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds) override;
 
 protected:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Ref")
+	UPROPERTY()
 	ANightCharacterBase* OwningCharacter;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Ref")
+	UPROPERTY()
 	UCharacterMovementComponent* OwningMovementComponent;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Ref")
-	ANightCharacterBase* TargetCharacter;
-	
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "AnimData|LocomotionData")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AnimData|LocomotionData")
 	float GroundSpeed;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "AnimData|LocomotionData")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AnimData|LocomotionData")
 	bool bHasAcceleration;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "AnimData|LocomotionData")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AnimData|LocomotionData")
 	float LocomotionDirection;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "AnimData|LocomotionData")
-	float Angle;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "FaceAO")
-	float FacePitch;
-	
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "FaceAO")
-	float FaceYaw;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
-	bool IsDead;
-	
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool DoesOwnerHaveTag(FName TagToCheck) const;
 };
