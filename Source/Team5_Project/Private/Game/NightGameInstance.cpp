@@ -3,6 +3,8 @@
 
 #include "Game/NightGameInstance.h"
 
+#include "Team5_Project/NightDebugHelper.h"
+
 UNightGameInstance::UNightGameInstance()
 {
     TotalDeathCount = 0;
@@ -32,10 +34,10 @@ void UNightGameInstance::AddTotalTime(float TimeCount)
 FString UNightGameInstance::GetNextLevelName()
 {
     GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("instance getnextlevelname")));
-
+    
     UE_LOG(LogTemp, Warning, TEXT("LevelNames Array Size: %d"), LevelNames.Num());
     UE_LOG(LogTemp, Warning, TEXT("CurrentLevelIndex: %d"), CurrentLevelIndex);
-
+    //Debug::Print(FString::Printf(TEXT("LevelNames Array Size: %d"), LevelNames.Num()));
     if (LevelNames.IsValidIndex(CurrentLevelIndex))
     {
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("isvalid")));
