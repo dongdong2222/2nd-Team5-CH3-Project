@@ -14,5 +14,5 @@ class TEAM5_PROJECT_API ANightWeaponKnife : public ANightWeaponBase
 public:
 	ANightWeaponKnife();
 
-	void Fire()override;
+
 };

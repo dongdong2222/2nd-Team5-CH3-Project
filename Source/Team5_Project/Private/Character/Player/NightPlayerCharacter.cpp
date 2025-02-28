@@ -6,17 +6,9 @@
 #include "Controller/Player/NightPlayerController.h"
 #include "DataAsset/NightPlayerDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "State/NightPlayerState.h"
-#include "Weapon/NightWeaponBase.h"
-#include "DataAsset/FPlayerItemDataRow.h"
-#include "MotionWarpingComponent.h"
-//#include "AnimInstance/Player/NightPlayerAnimInstance.h"
 
 ANightPlayerCharacter::ANightPlayerCharacter()
 {
-  //initialize QuickSlot
-  QuickSlot.SetNum(3);
-  CurrentSlot = 0;
 }
 
 
@@ -153,7 +145,7 @@ void ANightPlayerCharacter::EndSprint(const FInputActionValue& Value)
 
 void ANightPlayerCharacter::Rolling(const FInputActionValue& Value)
 {
-  //TODO : ¿øÇÏ´Â ¹æÇâÀ¸·Î ÀÏÁ¤°Å¸® ±¸¸£±â, ±¸¸£´Â µ¿¾È Å¸°Ý¹ÞÁö ¾ÊÀ½
+  //TODO : ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ý¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
   if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
   if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.UnLock.Crouch"))) return;
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
@@ -223,33 +215,26 @@ void ANightPlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
 
 void ANightPlayerCharacter::ESC(const FInputActionValue& Value)
 {
-  //TODO : ESCÃ¢ ¿­¸° ÈÄ, Ä¿¼­ ¿òÁ÷ÀÌ°Ô ¹Ù²ñ
+  //TODO : ESCÃ¢ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½Ù²ï¿½
 }
 
 void ANightPlayerCharacter::UsePotion(const FInputActionValue& Value)
 {
   if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
-  //TODO : Æ÷¼Ç »ç¿ë
-  UNightPlayerDataAsset* PlayerStatData = Cast<UNightPlayerDataAsset>(StatData);
-  if (!PlayerStatData) return;
-  FHealPotionData HealPotionData= PlayerStatData->GetHealPotionData();
-  if (HealPotionData.Use())
-  {
-    PlayerStatData->SetHealth(PlayerStatData->GetHealth() + HealPotionData.HealAmount);
-  }
+  //TODO : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 }
 
 void ANightPlayerCharacter::Throw(const FInputActionValue& Value)
 {
   if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
-  //TODO :  ¹Ù·Î ´øÁö´Â ¸ð¼Ç ÈÄ ÅõÃ´ ¹«±â ´øÁö±â
+  //TODO :  ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã´ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
   Anim->Montage_Play(ThrowMontage);
 }
 
 void ANightPlayerCharacter::Interaction(const FInputActionValue& Value)
 {
-  //TODO : »óÈ£ÀÛ¿ëÀÌ °¡´ÉÇÑ »óÈ²ÀÏ¶§ »óÈ£ÀÛ¿ë
+  //TODO : ï¿½ï¿½È£ï¿½Û¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È²ï¿½Ï¶ï¿½ ï¿½ï¿½È£ï¿½Û¿ï¿½
 }
 
 

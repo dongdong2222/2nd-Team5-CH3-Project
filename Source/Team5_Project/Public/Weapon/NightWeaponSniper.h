@@ -15,13 +15,7 @@ public:
 	ANightWeaponSniper();
 
 
-
-
-
-
-	void Fire()override;
-	UFUNCTION(BlueprintCallable, Category = "SniperWeapon")
-	void Reload();
+	
 	UFUNCTION(BlueprintCallable, Category = "SniperWeapon")
 	void ZoomIn();
 	UFUNCTION(BlueprintCallable, Category = "SniperWeapon")

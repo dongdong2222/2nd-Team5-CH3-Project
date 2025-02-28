@@ -26,6 +26,11 @@ ANightEnemyBase::ANightEnemyBase()
 	GetCharacterMovement()->RotationRate = FRotator(0.f,180.f,0.f); // 캐릭터 회전 속도 설정
 	GetCharacterMovement()->MaxWalkSpeed = 300.f; // 캐릭터의 최대 이동 속도(걷기) 설정
 	GetCharacterMovement()->BrakingDecelerationWalking = 1000.f; // 걷는 도중 제동 감속 설정
+
+	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
+	CollisionBox->SetupAttachment(GetMesh());
+	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore); // CapsuleComponent에서 Camera 채널 무시
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore); // Mesh에서 Camera 채널 무시
@@ -208,10 +213,10 @@ void ANightEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (CollisionComponent)
+	if (CollisionBox)
 	{
-		CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ANightEnemyBase::OnOverlapBegin);
-		CollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ANightEnemyBase::OnEndOverlap);	
+		CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ANightEnemyBase::OnOverlapBegin);
+		CollisionBox->OnComponentEndOverlap.AddDynamic(this, &ANightEnemyBase::OnEndOverlap);	
 	}
 	
 }

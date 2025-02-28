@@ -7,7 +7,6 @@
 #include "Navigation/CrowdFollowingComponent.h"
 #include "NightAIController.generated.h"
 
-class UAISenseConfig_Damage;
 class ANightEnemyBase;
 struct FAIStimulus;
 class UAISenseConfig_Sight;
@@ -42,9 +41,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UAISenseConfig_Sight* AISenseConfig_Sight;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
-	UAISenseConfig_Damage* AISenseConfig_Damage;
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
 	UBehaviorTree* BehaviorTreeToRun;
 

@@ -8,8 +8,6 @@
 #include "NightPlayerCharacter.generated.h"
 
 struct FInputActionValue;
-//struct FPlayerItemDataRow;
-class ANightWeaponBase;
 /**
  * 
  */
@@ -71,12 +69,11 @@ private:
 	void StartSprint(const FInputActionValue& Value);
 	void EndSprint(const FInputActionValue& Value);
 	void Rolling(const FInputActionValue& Value);
-	// - ÃÑ°ü·Ã
+	// - ï¿½Ñ°ï¿½ï¿½ï¿½
 	void Reload(const FInputActionValue& Value);
 	void Aim(const FInputActionValue& Value);
 	void Shot(const FInputActionValue& Value);
-	void SwitchWeapon(const FInputActionValue& Value);
-	// - ±âÅ¸
+	// - ï¿½ï¿½Å¸
 	void ESC(const FInputActionValue& Value);
 	void UsePotion(const FInputActionValue& Value);
 	void Throw(const FInputActionValue& Value);
