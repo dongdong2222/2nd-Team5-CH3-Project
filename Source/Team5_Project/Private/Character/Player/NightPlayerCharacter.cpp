@@ -11,6 +11,18 @@ ANightPlayerCharacter::ANightPlayerCharacter()
 {
 }
 
+
+void ANightPlayerCharacter::BeginPlay()
+{
+  Super::BeginPlay();
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  if (!Anim) return;
+  Anim->OnMontageStarted.AddDynamic(this, &ANightPlayerCharacter::OnMontageStart);
+  Anim->OnMontageEnded.AddDynamic(this, &ANightPlayerCharacter::OnMontageEnd);
+
+  GetCharacterMovement()->MaxWalkSpeed  = Cast<UNightPlayerDataAsset>(StatData)->GetWalkSpeed();
+}
+
 void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
   Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -32,6 +44,18 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     &ThisClass::Turn
   );
   EnhancedInput->BindAction(
+    PlayerController->SprintAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::StartSprint
+  );
+  EnhancedInput->BindAction(
+    PlayerController->SprintAction,
+    ETriggerEvent::Completed,
+    this,
+    &ThisClass::EndSprint
+  );
+  EnhancedInput->BindAction(
     PlayerController->CrouchAction,
     ETriggerEvent::Triggered,
     this,
@@ -42,6 +66,24 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     ETriggerEvent::Triggered,
     this,
     &ThisClass::Rolling
+  );
+  EnhancedInput->BindAction(
+    PlayerController->SwitchWeaponAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::SwitchWeapon
+  );
+  EnhancedInput->BindAction(
+    PlayerController->ThrowAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::Throw
+  );
+  EnhancedInput->BindAction(
+    PlayerController->AimAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::Aim
   );
 }
 
@@ -70,11 +112,14 @@ void ANightPlayerCharacter::Turn(const FInputActionValue& Value)
 
 void ANightPlayerCharacter::SwitchCrouch(const FInputActionValue& Value)
 {
+  
   if (bIsCrouched) {
+    PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.UnLock.Crouch"));
     UnCrouch();
   }
   else
   {
+    PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.UnLock.Crouch"));
     Crouch();
   }
 }
@@ -100,10 +145,29 @@ void ANightPlayerCharacter::EndSprint(const FInputActionValue& Value)
 
 void ANightPlayerCharacter::Rolling(const FInputActionValue& Value)
 {
-  //TODO : ¿øÇÏ´Â ¹æÇâÀ¸·Î ÀÏÁ¤°Å¸® ±¸¸£±â, ±¸¸£´Â µ¿¾È Å¸°Ý¹ÞÁö ¾ÊÀ½
+  //TODO : ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ý¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.UnLock.Crouch"))) return;
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
   if (!Anim) return;
-  Anim->Montage_Play(RollingMontage);
+
+
+  FVector TargetLocation = GetCharacterMovement()->Velocity;
+  if (TargetLocation.IsNearlyZero())
+  {
+    TargetLocation = GetActorForwardVector();
+  }
+  FRotator PrevRotation = GetActorRotation();
+  FRotator TargetRotation = TargetLocation.Rotation();
+  TargetLocation.Normalize();
+  TargetLocation = GetActorLocation() + TargetLocation * Cast<UNightPlayerDataAsset>(StatData)->GetRollingDistance();
+  
+
+  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocation("RollTargetLocation", TargetLocation);
+  //MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollTargetRotation", TargetLocation, TargetRotation);
+  //MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollEndRotation", TargetLocation, PrevRotation);
+  Anim->Montage_Play(RollingMontage, 1.3f);
+
   //Anim->OnMontageEnded.AddDynamic(this, Montage);
 }
 
@@ -115,6 +179,7 @@ void ANightPlayerCharacter::Reload(const FInputActionValue& Value)
 void ANightPlayerCharacter::Aim(const FInputActionValue& Value)
 {
   //TODO : Gun->Aiming();
+  SetFirstPersonView();
 }
 
 void ANightPlayerCharacter::Shot(const FInputActionValue& Value)
@@ -122,32 +187,120 @@ void ANightPlayerCharacter::Shot(const FInputActionValue& Value)
   //TODO : Gun->Fire();
 }
 
+void ANightPlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
+{
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
+  float SwitchInput = Value.Get<float>();
+  if (SwitchInput > 0) {
+    AddToCurrentSlot(1);
+  }
+  else
+  {
+    AddToCurrentSlot(-1);
+  }
+
+  PrevWeapon = CurrentWeapon;
+  CurrentWeapon = GetWorld()->SpawnActor<ANightWeaponBase>(
+    QuickSlot[CurrentSlot],
+    FVector::ZeroVector,
+    FRotator::ZeroRotator
+  );
+  CurrentWeapon->SetActorHiddenInGame(true);
+  
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  if (!Anim) return;
+  Anim->Montage_Play(CurrentWeapon->EqipMontage, 1.2f);
+  Anim->LinkAnimClassLayers(CurrentWeapon->AnimLayer);
+}
+
 void ANightPlayerCharacter::ESC(const FInputActionValue& Value)
 {
-  //TODO : ESCÃ¢ ¿­¸° ÈÄ, Ä¿¼­ ¿òÁ÷ÀÌ°Ô ¹Ù²ñ
+  //TODO : ESCÃ¢ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½Ù²ï¿½
 }
 
 void ANightPlayerCharacter::UsePotion(const FInputActionValue& Value)
 {
-  //TODO : Æ÷¼Ç »ç¿ë
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
+  //TODO : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 }
 
 void ANightPlayerCharacter::Throw(const FInputActionValue& Value)
 {
-  //TODO :  ¹Ù·Î ´øÁö´Â ¸ð¼Ç ÈÄ ÅõÃ´ ¹«±â ´øÁö±â
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
+  //TODO :  ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã´ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  Anim->Montage_Play(ThrowMontage);
 }
 
 void ANightPlayerCharacter::Interaction(const FInputActionValue& Value)
 {
-  //TODO : »óÈ£ÀÛ¿ëÀÌ °¡´ÉÇÑ »óÈ²ÀÏ¶§ »óÈ£ÀÛ¿ë
+  //TODO : ï¿½ï¿½È£ï¿½Û¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È²ï¿½Ï¶ï¿½ ï¿½ï¿½È£ï¿½Û¿ï¿½
 }
 
 
-void ANightPlayerCharacter::SetFirstPersonView()
-{
-
-}
 
 void ANightPlayerCharacter::SetThirdPersonView()
 {
+}
+
+void ANightPlayerCharacter::SetWeaponToPlayerHand()
+{
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  if (!Anim) return;
+  if (PrevWeapon)
+  {
+    PrevWeapon->Destroy();
+  }
+
+  CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
+  CurrentWeapon->SetActorHiddenInGame(false);
+}
+
+void ANightPlayerCharacter::AddToCurrentSlot(float value)
+{
+  int32 Temp = CurrentSlot + value;
+  if (Temp >= QuickSlot.Num())
+  {
+    CurrentSlot = 0;
+  }
+  else if (Temp < 0)
+  {
+    CurrentSlot = QuickSlot.Num() - 1;
+  }
+  else
+  {
+    CurrentSlot = Temp;
+  }
+}
+
+void ANightPlayerCharacter::OnMontageStart(UAnimMontage* Montage)
+{
+  if (Montage == RollingMontage)
+  {
+    PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.Lock.Rolling"));
+  }
+  else if (Montage == ThrowMontage)
+  {
+    PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.Lock.Throw"));
+  }
+  else if (Montage == CurrentWeapon->EqipMontage)
+  {
+    PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.Lock.Equip"));
+  }
+}
+
+void ANightPlayerCharacter::OnMontageEnd(UAnimMontage* Montage, bool bInterrupted)
+{
+  if (Montage == RollingMontage)
+  {
+    PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.Lock.Rolling"));
+  }
+  else if (Montage == ThrowMontage)
+  {
+    PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.Lock.Throw"));
+  }
+  else if (Montage == CurrentWeapon->EqipMontage)
+  {
+    PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.Lock.Equip"));
+  }
 }

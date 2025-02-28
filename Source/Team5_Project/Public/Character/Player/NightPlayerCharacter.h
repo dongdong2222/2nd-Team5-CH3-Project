@@ -22,13 +22,45 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	UAnimMontage* RollingMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	UAnimMontage* ThrowMontage;
+
+	UPROPERTY(EditAnywhere, Category = "QuickSlot")
+	TArray<TSubclassOf<ANightWeaponBase>> QuickSlot;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Weapon")
+	ANightWeaponBase* CurrentWeapon;
+
+
 public:
+	UFUNCTION()
+	//Bind to Anim Notify
+	void SetWeaponToPlayerHand();
+	// End of Bind to Anim Notify
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetFirstPersonView();
+
+	void SetThirdPersonView();
+
 	ANightPlayerCharacter();
 	//~APawn interface
+	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//End of ~APawn interface
 
 private:
+	int32 CurrentSlot;
+
+	ANightWeaponBase* PrevWeapon;
+
+
+private:
+	UFUNCTION()
+	void OnMontageStart(UAnimMontage* Montage);
+	UFUNCTION()
+	void OnMontageEnd(UAnimMontage* Montage, bool bInterrupted);
+
 	//InputAction
 	// - locomotion
 	void Move(const FInputActionValue& Value);
@@ -37,18 +69,20 @@ private:
 	void StartSprint(const FInputActionValue& Value);
 	void EndSprint(const FInputActionValue& Value);
 	void Rolling(const FInputActionValue& Value);
-	// - ÃÑ°ü·Ã
+	// - ï¿½Ñ°ï¿½ï¿½ï¿½
 	void Reload(const FInputActionValue& Value);
 	void Aim(const FInputActionValue& Value);
 	void Shot(const FInputActionValue& Value);
-	// - ±âÅ¸
+	// - ï¿½ï¿½Å¸
 	void ESC(const FInputActionValue& Value);
 	void UsePotion(const FInputActionValue& Value);
 	void Throw(const FInputActionValue& Value);
 	void Interaction(const FInputActionValue& Value);
 	//End of InputAction
 
-	void SetFirstPersonView();
-	void SetThirdPersonView();
+
+	void AddToCurrentSlot(float value);
+
+
 	
 };
