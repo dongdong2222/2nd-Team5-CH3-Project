@@ -20,6 +20,17 @@ ANightPlayerCharacter::ANightPlayerCharacter()
 }
 
 
+void ANightPlayerCharacter::BeginPlay()
+{
+  Super::BeginPlay();
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  if (!Anim) return;
+  Anim->OnMontageStarted.AddDynamic(this, &ANightPlayerCharacter::OnMontageStart);
+  Anim->OnMontageEnded.AddDynamic(this, &ANightPlayerCharacter::OnMontageEnd);
+
+  GetCharacterMovement()->MaxWalkSpeed  = Cast<UNightPlayerDataAsset>(StatData)->GetWalkSpeed();
+}
+
 void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
   Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -41,6 +52,18 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     &ThisClass::Turn
   );
   EnhancedInput->BindAction(
+    PlayerController->SprintAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::StartSprint
+  );
+  EnhancedInput->BindAction(
+    PlayerController->SprintAction,
+    ETriggerEvent::Completed,
+    this,
+    &ThisClass::EndSprint
+  );
+  EnhancedInput->BindAction(
     PlayerController->CrouchAction,
     ETriggerEvent::Triggered,
     this,
@@ -57,6 +80,18 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     ETriggerEvent::Triggered,
     this,
     &ThisClass::SwitchWeapon
+  );
+  EnhancedInput->BindAction(
+    PlayerController->ThrowAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::Throw
+  );
+  EnhancedInput->BindAction(
+    PlayerController->AimAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::Aim
   );
 }
 
@@ -85,11 +120,14 @@ void ANightPlayerCharacter::Turn(const FInputActionValue& Value)
 
 void ANightPlayerCharacter::SwitchCrouch(const FInputActionValue& Value)
 {
+  
   if (bIsCrouched) {
+    PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.UnLock.Crouch"));
     UnCrouch();
   }
   else
   {
+    PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.UnLock.Crouch"));
     Crouch();
   }
 }
@@ -116,8 +154,11 @@ void ANightPlayerCharacter::EndSprint(const FInputActionValue& Value)
 void ANightPlayerCharacter::Rolling(const FInputActionValue& Value)
 {
   //TODO : 원하는 방향으로 일정거리 구르기, 구르는 동안 타격받지 않음
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.UnLock.Crouch"))) return;
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
   if (!Anim) return;
+
 
   FVector TargetLocation = GetCharacterMovement()->Velocity;
   if (TargetLocation.IsNearlyZero())
@@ -131,9 +172,10 @@ void ANightPlayerCharacter::Rolling(const FInputActionValue& Value)
   
 
   MotionWarpingComponent->AddOrUpdateWarpTargetFromLocation("RollTargetLocation", TargetLocation);
-  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollTargetRotation", TargetLocation, TargetRotation);
-  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollEndRotation", TargetLocation, PrevRotation);
-  Anim->Montage_Play(RollingMontage);
+  //MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollTargetRotation", TargetLocation, TargetRotation);
+  //MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollEndRotation", TargetLocation, PrevRotation);
+  Anim->Montage_Play(RollingMontage, 1.3f);
+
   //Anim->OnMontageEnded.AddDynamic(this, Montage);
 }
 
@@ -145,6 +187,7 @@ void ANightPlayerCharacter::Reload(const FInputActionValue& Value)
 void ANightPlayerCharacter::Aim(const FInputActionValue& Value)
 {
   //TODO : Gun->Aiming();
+  SetFirstPersonView();
 }
 
 void ANightPlayerCharacter::Shot(const FInputActionValue& Value)
@@ -154,6 +197,7 @@ void ANightPlayerCharacter::Shot(const FInputActionValue& Value)
 
 void ANightPlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
 {
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
   float SwitchInput = Value.Get<float>();
   if (SwitchInput > 0) {
     AddToCurrentSlot(1);
@@ -173,7 +217,7 @@ void ANightPlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
   
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
   if (!Anim) return;
-  Anim->Montage_Play(CurrentWeapon->EqipMontage);
+  Anim->Montage_Play(CurrentWeapon->EqipMontage, 1.2f);
   Anim->LinkAnimClassLayers(CurrentWeapon->AnimLayer);
 }
 
@@ -184,6 +228,7 @@ void ANightPlayerCharacter::ESC(const FInputActionValue& Value)
 
 void ANightPlayerCharacter::UsePotion(const FInputActionValue& Value)
 {
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
   //TODO : 포션 사용
   UNightPlayerDataAsset* PlayerStatData = Cast<UNightPlayerDataAsset>(StatData);
   if (!PlayerStatData) return;
@@ -196,7 +241,10 @@ void ANightPlayerCharacter::UsePotion(const FInputActionValue& Value)
 
 void ANightPlayerCharacter::Throw(const FInputActionValue& Value)
 {
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
   //TODO :  바로 던지는 모션 후 투척 무기 던지기
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  Anim->Montage_Play(ThrowMontage);
 }
 
 void ANightPlayerCharacter::Interaction(const FInputActionValue& Value)
@@ -205,10 +253,6 @@ void ANightPlayerCharacter::Interaction(const FInputActionValue& Value)
 }
 
 
-void ANightPlayerCharacter::SetFirstPersonView()
-{
-
-}
 
 void ANightPlayerCharacter::SetThirdPersonView()
 {
@@ -241,5 +285,37 @@ void ANightPlayerCharacter::AddToCurrentSlot(float value)
   else
   {
     CurrentSlot = Temp;
+  }
+}
+
+void ANightPlayerCharacter::OnMontageStart(UAnimMontage* Montage)
+{
+  if (Montage == RollingMontage)
+  {
+    PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.Lock.Rolling"));
+  }
+  else if (Montage == ThrowMontage)
+  {
+    PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.Lock.Throw"));
+  }
+  else if (Montage == CurrentWeapon->EqipMontage)
+  {
+    PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.Lock.Equip"));
+  }
+}
+
+void ANightPlayerCharacter::OnMontageEnd(UAnimMontage* Montage, bool bInterrupted)
+{
+  if (Montage == RollingMontage)
+  {
+    PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.Lock.Rolling"));
+  }
+  else if (Montage == ThrowMontage)
+  {
+    PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.Lock.Throw"));
+  }
+  else if (Montage == CurrentWeapon->EqipMontage)
+  {
+    PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.Lock.Equip"));
   }
 }

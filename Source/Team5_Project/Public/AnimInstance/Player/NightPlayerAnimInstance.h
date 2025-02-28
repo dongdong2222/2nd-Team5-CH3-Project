@@ -25,6 +25,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Rotation")
 	FRotator DeltaRotation;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Rotation")
+	FRotator RotationForAim;
+
 	UPROPERTY(BlueprintReadWrite, Category="Velocity")
 	FVector WorldVelocity;
 

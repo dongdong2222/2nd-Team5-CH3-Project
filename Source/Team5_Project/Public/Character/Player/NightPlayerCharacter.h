@@ -25,38 +25,44 @@ public:
 	UAnimMontage* RollingMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
-	TSubclassOf<UAnimInstance> Pistol;
-
-	UPROPERTY(EditAnywhere, Category = "Animation")
-	TSubclassOf<UAnimInstance> Rifle;
-
-	UPROPERTY(EditAnywhere, Category = "Animation")
-	TSubclassOf<UAnimInstance> Shotgun;
+	UAnimMontage* ThrowMontage;
 
 	UPROPERTY(EditAnywhere, Category = "QuickSlot")
-
 	TArray<TSubclassOf<ANightWeaponBase>> QuickSlot;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Weapon")
+	ANightWeaponBase* CurrentWeapon;
 
 
 public:
 	UFUNCTION()
-
 	//Bind to Anim Notify
 	void SetWeaponToPlayerHand();
 	// End of Bind to Anim Notify
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetFirstPersonView();
+
+	void SetThirdPersonView();
+
 	ANightPlayerCharacter();
 	//~APawn interface
+	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//End of ~APawn interface
 
 private:
 	int32 CurrentSlot;
-	ANightWeaponBase* CurrentWeapon;
+
 	ANightWeaponBase* PrevWeapon;
 
+
 private:
+	UFUNCTION()
+	void OnMontageStart(UAnimMontage* Montage);
+	UFUNCTION()
+	void OnMontageEnd(UAnimMontage* Montage, bool bInterrupted);
+
 	//InputAction
 	// - locomotion
 	void Move(const FInputActionValue& Value);
@@ -77,9 +83,9 @@ private:
 	void Interaction(const FInputActionValue& Value);
 	//End of InputAction
 
-	void SetFirstPersonView();
-	void SetThirdPersonView();
 
 	void AddToCurrentSlot(float value);
+
+
 	
 };
