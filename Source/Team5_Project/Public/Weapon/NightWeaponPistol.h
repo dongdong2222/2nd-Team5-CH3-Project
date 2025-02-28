@@ -14,4 +14,9 @@ public:
 	ANightWeaponPistol();
 
 
+
+
+	void Fire()override;
+	UFUNCTION(BlueprintCallable, Category = "PistolWeapon")
+	void Reload();
 };

@@ -11,14 +11,17 @@
 #include "Navigation/CrowdFollowingComponent.h"
 
 #include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Damage.h"
 #include "Perception/AISenseConfig_Sight.h"
 
 ANightAIController::ANightAIController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>("PathFollowingComponent"))
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
 	AISenseConfig_Sight = CreateDefaultSubobject<UAISenseConfig_Sight>("EnemySenseConfig_Sight");
-
+	AISenseConfig_Damage = CreateDefaultSubobject<UAISenseConfig_Damage>("EnemySenseConfig_Damage");
+	
 	// 감지 설정 구성
 	AISenseConfig_Sight->DetectionByAffiliation.bDetectEnemies = true; // 적 감지 활성화
 	AISenseConfig_Sight->DetectionByAffiliation.bDetectFriendlies = false; // 아군 감지 비활성화
@@ -31,7 +34,8 @@ ANightAIController::ANightAIController(const FObjectInitializer& ObjectInitializ
 
 	// AI 감지 컴포넌트 생성 및 설정
 	EnemyPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>("EnemyPerceptionComponent");
-	EnemyPerceptionComponent->ConfigureSense(*AISenseConfig_Sight); // 시야 감각 구성
+	EnemyPerceptionComponent->ConfigureSense(*AISenseConfig_Sight); 
+	EnemyPerceptionComponent->ConfigureSense(*AISenseConfig_Damage);
 	EnemyPerceptionComponent->SetDominantSense(AISenseConfig_Sight->GetSenseImplementation()); // 시야 감각을 주요 감각으로 설정
 	
 	// 감지 업데이트 이벤트 바인딩

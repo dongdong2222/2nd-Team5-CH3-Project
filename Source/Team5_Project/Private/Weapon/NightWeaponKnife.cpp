@@ -8,6 +8,11 @@ ANightWeaponKnife::ANightWeaponKnife()
 	WeaponType = "Knife";
 	Range = 200.0f;
 	Zoomtimes = 1;
-	FireDelay = 1.0f;
 }
 
+//권총 단발
+void ANightWeaponKnife::Fire()
+{
+	//delay만 추가
+
+}
