@@ -16,4 +16,14 @@ public:
 	ANightWeaponRifle();
 
 
+
+
+
+	void Fire()override;
+	UFUNCTION(BlueprintCallable, Category = "RifleWeapon")
+	void StartFire();
+	UFUNCTION(BlueprintCallable, Category = "RifleWeapon")
+	void StopFire();
+	UFUNCTION(BlueprintCallable, Category = "RifleWeapon")
+	void Reload();
 };
