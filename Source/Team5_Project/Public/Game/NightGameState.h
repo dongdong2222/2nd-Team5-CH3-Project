@@ -6,6 +6,7 @@
 #include "GameFramework/GameState.h"
 #include "NightGameState.generated.h"
 
+class ANightDungeon_Doorway;
 /**
  * 
  */
@@ -17,21 +18,21 @@ class TEAM5_PROJECT_API ANightGameState : public AGameState
 public:
 	ANightGameState();
 
-	// Á×Àº È½¼ö
+	// ï¿½ï¿½ï¿½ï¿½ È½ï¿½ï¿½
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameData")
 	int32 DeathCount;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameData")
 	float LevelStartTime;
 
-	// ÇöÀç ·¹º§
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level")
 	//int32 CurrentLevelIndex;
 
-	//  ·¹º§ ÀÌµ¿ Æ®¸®°Å ¿À¹ö·¦ È½¼ö
+	//  ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È½ï¿½ï¿½
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level")
 	int32 OverlapTriggerCount;
-
+	
 	//FTimerHandle LevelTimerHandle;
 
 public:
@@ -45,5 +46,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
 	void LoadNextLevel();
-	
+
+	UFUNCTION(BlueprintCallable, Category = "Game Logic")
+	void OpenTheGate();
 };

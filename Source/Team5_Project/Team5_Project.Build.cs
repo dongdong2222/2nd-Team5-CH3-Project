@@ -18,7 +18,8 @@ public class Team5_Project : ModuleRules
 			"AIModule",
 			"MotionWarping",
 			"AnimGraphRuntime",
-			"GameplayTags"
+			"GameplayTags",
+			"Niagara"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

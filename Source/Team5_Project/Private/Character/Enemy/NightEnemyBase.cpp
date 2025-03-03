@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Controller/Enemy/NightAIController.h"
+#include "DataAsset/NightCharacterDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -213,6 +214,11 @@ void ANightEnemyBase::BeginPlay()
 		CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ANightEnemyBase::OnOverlapBegin);
 		CollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ANightEnemyBase::OnEndOverlap);	
 	}
+
+	/*if (StatData)
+	{
+		StatData->GetMaxHealth();
+	}*/
 	
 }
 
