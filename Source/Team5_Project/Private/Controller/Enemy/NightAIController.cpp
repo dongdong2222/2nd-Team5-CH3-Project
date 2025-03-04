@@ -84,6 +84,7 @@ void ANightAIController::OnEnemyPerceptionUpdated(AActor* Actor, FAIStimulus Sti
 	else
 	{
 		GetBlackboardComponent()->ClearValue(FName("TargetActor"));
+		GetBlackboardComponent()->SetValueAsEnum(FName("State"),static_cast<uint8>(EEnemyState ::Idle));
 	}
 	
 }

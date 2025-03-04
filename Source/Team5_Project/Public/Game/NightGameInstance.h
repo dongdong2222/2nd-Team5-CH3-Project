@@ -17,35 +17,35 @@ public:
 	UNightGameInstance();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameData")
-	TArray<int32> LevelDeathCounts; // ·¹º§ º° Á×Àº È½¼ö
+	TArray<int32> LevelDeathCounts; // ë ˆë²¨ ë³„ ì£½ì€ íšŸìˆ˜
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameData")
-	TArray<float> LevelClearTimes; // ·¹º§ º° Å¬¸®¾î ½Ã°£
+	TArray<float> LevelClearTimes; // ë ˆë²¨ ë³„ í´ë¦¬ì–´ ì‹œê°„
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameData")
-	int32 TotalDeathCount; // ÃÑ Á×Àº È½¼ö
+	int32 TotalDeathCount; // ì´ ì£½ì€ íšŸìˆ˜
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "GameData")
-	float TotalClearTime; // °ÔÀÓ Å¬¸®¾î±îÁö °É¸° ½Ã°£
+	float TotalClearTime; // ê²Œì„ í´ë¦¬ì–´ê¹Œì§€ ê±¸ë¦° ì‹œê°„
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Level")
-	int32 CurrentLevelIndex; // ÇöÀç ·¹º§
+	int32 CurrentLevelIndex; // í˜„ì¬ ë ˆë²¨
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game")
-	TArray<FString> LevelNames; // ·¹º§ ÀÌ¸§
+	TArray<FString> LevelNames; // ë ˆë²¨ ì´ë¦„
 
 	static const int32 MaxLevels = 2;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "GameData")
-	void AddDeathCount(int32 DeathCount); // ¸ğµç ·¹º§¿¡¼­ Á×Àº È½¼ö ´õÇÏ±â
+	void AddDeathCount(int32 DeathCount); // ëª¨ë“  ë ˆë²¨ì—ì„œ ì£½ì€ íšŸìˆ˜ ë”í•˜ê¸°
 
 	UFUNCTION(BlueprintCallable, Category = "GameData")
-	void AddTotalTime(float TimeCount); // °ÔÀÓ Å¬¸®¾î±îÁö °É¸° ½Ã°£ ±¸ÇÏ±â(Å¬¸®¾î ½ÇÆĞÇß´ø ·¹º§ÀÇ ½Ã°£µµ ÀüºÎ Æ÷ÇÔ)
+	void AddTotalTime(float TimeCount); // ê²Œì„ í´ë¦¬ì–´ê¹Œì§€ ê±¸ë¦° ì‹œê°„ êµ¬í•˜ê¸°(í´ë¦¬ì–´ ì‹¤íŒ¨í–ˆë˜ ë ˆë²¨ì˜ ì‹œê°„ë„ ì „ë¶€ í¬í•¨)
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
-	FString GetNextLevelName(); // ·¹º§ ÀÌ¸§ ¾ò±â 
+	FString GetNextLevelName(); // ë ˆë²¨ ì´ë¦„ ì–»ê¸° 
 
-	void SaveLevelStats(float ClearTime, int32 DeathCount); //ÃÖÁ¾ °á°ú
+	void SaveLevelStats(float ClearTime, int32 DeathCount); //ìµœì¢… ê²°ê³¼
 
 };

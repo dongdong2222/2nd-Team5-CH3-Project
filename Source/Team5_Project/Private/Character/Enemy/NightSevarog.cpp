@@ -75,7 +75,7 @@ void ANightSevarog::Fire_SoulSiphon()
                 // 데미지 가하기
                 UGameplayStatics::ApplyPointDamage(
                     HitCharacter,      // 데미지를 받을 액터
-                    DamageAmount,        // 데미지 양 (헤더에 float DamageAmount; 로 선언하고 값을 설정해야 함)
+                    Damage,        // 데미지 양 (헤더에 float DamageAmount; 로 선언하고 값을 설정해야 함)
                     (TraceEndLocation - SpawnLocation).GetSafeNormal(), // 데미지 방향 (시작점에서 끝점 방향)
                     HitResult,         // Hit Result
                     nullptr,           // 데미지를 가한 컨트롤러 (nullptr 가능)
