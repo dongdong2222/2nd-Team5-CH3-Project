@@ -66,28 +66,37 @@ public:
 	
 	ANightEnemyBase();
 
+	// 적의 상태를 설정하는 함수
 	UFUNCTION(BlueprintCallable,Category= "Night Enemy")
 	void SetState(EEnemyState NewState);
 
+	// 적이 공격 중인지 확인하는 함수
 	UFUNCTION(BlueprintPure, Category = "Combat")
 	bool GetIsAttacking() const;
 
+	// 공격 몽타주가 종료되었을 때 호출되는 함수
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
+	// 콜리전 시작 시 호출되는 함수
 	UFUNCTION()
 	void OnOverlapBegin( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,int32 OtherBodyIndex, bool bFromSweep,	const FHitResult & SweepResult);
 
+	// 콜리전 종료 시 호출되는 함수
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
+	// 데미지를 받을 때 호출되는 함수
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-	
+
+	// 근접 공격을 실행하는 함수
 	void MeleeAttack(FName Tag);
 
+	// 태그를 추가하는 함수
 	UFUNCTION(BlueprintCallable)
 	void addTag(FName tag);
 
+	// 태그를 제거하는 함수
 	UFUNCTION(BlueprintCallable)
 	void removeTag(FName tag);
 
