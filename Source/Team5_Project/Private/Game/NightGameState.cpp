@@ -5,6 +5,8 @@
 #include "Game/NightGameInstance.h"
 #include <Kismet/GameplayStatics.h>
 
+#include "Actors/NightDungeon_Doorway.h"
+
 ANightGameState::ANightGameState()
 {
     DeathCount = 0;
@@ -35,7 +37,7 @@ void ANightGameState::EndLevel()
 
 void ANightGameState::OnGameFinished()
 {
-    // ���� HUD ��������
+    // 현재 HUD 가져오기
     /*
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
     if (PC)
@@ -53,7 +55,8 @@ void ANightGameState::IncreaseOverlapTriggerCount()
     if (OverlapTriggerCount >= 5)
     {
         EndLevel();
-        LoadNextLevel();
+        OpenTheGate();
+        //LoadNextLevel();
     }
 }
 
@@ -84,5 +87,14 @@ void ANightGameState::LoadNextLevel()
         {
             UGameplayStatics::OpenLevel(GetWorld(), FName(*NextLevelName));
         }
+    }
+}
+
+void ANightGameState::OpenTheGate()
+{
+    ANightDungeon_Doorway* FoundDoorway = Cast<ANightDungeon_Doorway>(UGameplayStatics::GetActorOfClass(GetWorld(), ANightDungeon_Doorway::StaticClass())); // 게임 월드에서 ANightDungeon_Doorway 클래스의 액터를 검색
+    if (FoundDoorway) // 발견된 경우
+    {
+        FoundDoorway->OpenDoors(); // 문을 여는 동작 호출
     }
 }
