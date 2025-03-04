@@ -31,6 +31,18 @@ void ANightPlayerCharacter::BeginPlay()
   GetCharacterMovement()->MaxWalkSpeed  = Cast<UNightPlayerDataAsset>(StatData)->GetWalkSpeed();
 }
 
+float ANightPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+  //TODO : 임시 데미지 로직
+  StatData->SetHealth(StatData->GetHealth() - DamageAmount);
+  if (FMath::IsNearlyZero(StatData->GetHealth()))
+  {
+    //TODO : Updata to DamageDirection
+    Dead(GetActorForwardVector());
+  }
+  return 0.0f;
+}
+
 void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
   Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -206,19 +218,19 @@ void ANightPlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
   {
     AddToCurrentSlot(-1);
   }
-
-  PrevWeapon = CurrentWeapon;
-  CurrentWeapon = GetWorld()->SpawnActor<ANightWeaponBase>(
-    QuickSlot[CurrentSlot],
-    FVector::ZeroVector,
-    FRotator::ZeroRotator
-  );
-  CurrentWeapon->SetActorHiddenInGame(true);
-  
-  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
-  if (!Anim) return;
-  Anim->Montage_Play(CurrentWeapon->EqipMontage, 1.2f);
-  Anim->LinkAnimClassLayers(CurrentWeapon->AnimLayer);
+  K2_SwitchWeapon();
+  //PrevWeapon = CurrentWeapon;
+  //CurrentWeapon = GetWorld()->SpawnActor<ANightWeaponBase>(
+  //  QuickSlot[CurrentSlot],
+  //  FVector::ZeroVector,
+  //  FRotator::ZeroRotator
+  //);
+  //CurrentWeapon->SetActorHiddenInGame(true);
+  //
+  //UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  //if (!Anim) return;
+  //Anim->Montage_Play(CurrentWeapon->EqipMontage, 1.2f);
+  //Anim->LinkAnimClassLayers(CurrentWeapon->AnimLayer);
 }
 
 void ANightPlayerCharacter::ESC(const FInputActionValue& Value)
@@ -269,6 +281,21 @@ void ANightPlayerCharacter::SetWeaponToPlayerHand()
 
   CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
   CurrentWeapon->SetActorHiddenInGame(false);
+}
+
+void ANightPlayerCharacter::Dead(FVector Direction)
+{
+  USkeletalMeshComponent* PlayerMesh = GetMesh();
+  if (!PlayerMesh) return;
+  //set Regdoll 
+  PlayerMesh->SetCollisionProfileName(TEXT("Ragdoll"));
+  PlayerMesh->SetSimulatePhysics(true);
+  //Impulse
+  float Impact = 4000.f;
+  FVector Impulse = Direction * Impact;
+
+  PlayerMesh->SetAllPhysicsLinearVelocity(FVector::ZeroVector);
+  PlayerMesh->AddImpulseToAllBodiesBelow(Impulse);
 }
 
 void ANightPlayerCharacter::AddToCurrentSlot(float value)

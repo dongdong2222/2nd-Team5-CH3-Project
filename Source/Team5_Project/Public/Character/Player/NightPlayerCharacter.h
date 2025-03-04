@@ -18,7 +18,7 @@ class TEAM5_PROJECT_API ANightPlayerCharacter : public ANightCharacterBase
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, Category="State")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="State")
 	FGameplayTagContainer PlayerStateTags;
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
@@ -27,12 +27,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	UAnimMontage* ThrowMontage;
 
-	UPROPERTY(EditAnywhere, Category = "QuickSlot")
-	TArray<TSubclassOf<ANightWeaponBase>> QuickSlot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "QuickSlot")
+	TArray<FName> QuickSlot;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Weapon")
 	ANightWeaponBase* CurrentWeapon;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
+	ANightWeaponBase* PrevWeapon;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
+	int32 CurrentSlot;
 
 public:
 	UFUNCTION()
@@ -45,16 +49,20 @@ public:
 
 	void SetThirdPersonView();
 
+	UFUNCTION(BlueprintCallable)
+	void Dead(FVector Direction);
+
 	ANightPlayerCharacter();
 	//~APawn interface
 	virtual void BeginPlay() override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//End of ~APawn interface
 
-private:
-	int32 CurrentSlot;
+	UFUNCTION(BlueprintImplementableEvent)
+	void K2_SwitchWeapon();
 
-	ANightWeaponBase* PrevWeapon;
+
 
 
 private:
@@ -76,12 +84,14 @@ private:
 	void Aim(const FInputActionValue& Value);
 	void Shot(const FInputActionValue& Value);
 	void SwitchWeapon(const FInputActionValue& Value);
+
 	// - ±‚≈∏
 	void ESC(const FInputActionValue& Value);
 	void UsePotion(const FInputActionValue& Value);
 	void Throw(const FInputActionValue& Value);
 	void Interaction(const FInputActionValue& Value);
 	//End of InputAction
+
 
 
 	void AddToCurrentSlot(float value);
