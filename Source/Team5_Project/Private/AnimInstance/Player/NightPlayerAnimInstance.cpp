@@ -24,6 +24,21 @@ void UNightPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
   UpdateRotation();
   UpdateVelocity();
   UpdateAim(DeltaSeconds);
+
+  if (!Montage_IsPlaying(InPlaceMontage) && (DeltaRotation.Yaw >= 90.f || DeltaRotation.Yaw <= -90.f) && GroundSpeed < 10.f )
+  {
+    Montage_Play(InPlaceMontage);
+    if (DeltaRotation.Yaw >= 90.f)
+    {
+      Montage_JumpToSection("right90", InPlaceMontage);
+    }
+    else if (DeltaRotation.Yaw <= -90.f)
+    {
+      Montage_JumpToSection("left90", InPlaceMontage);
+
+    }
+  }
+
 }
 
 void UNightPlayerAnimInstance::UpdateRotation()
@@ -34,16 +49,16 @@ void UNightPlayerAnimInstance::UpdateRotation()
   ControllerRotation = Character->GetController()->GetControlRotation();
   DeltaRotation = UKismetMathLibrary::NormalizedDeltaRotator(ControllerRotation, WorldRotation);
   //Pitch Normalize
-  double Pitch = ControllerRotation.Pitch;
+  double Pitch = DeltaRotation.Pitch;
   Pitch = FMath::Fmod(Pitch + 180.f, 360.f);
   if (Pitch < 0.f) Pitch += 360.f;
   Pitch -= 180.f;
   //Yaw Normalize
-  double Yaw = ControllerRotation.Yaw;
+  double Yaw = DeltaRotation.Yaw;
   Yaw = FMath::Fmod(Yaw + 180.f, 360.f);
   if (Yaw < 0.f) Yaw += 360.f;
   Yaw -= 180.f;
-  RotationForAim = FRotator(Pitch, Yaw, ControllerRotation.Roll);
+  RotationForAim = FRotator(Pitch, Yaw, DeltaRotation.Roll);
 
 }
 

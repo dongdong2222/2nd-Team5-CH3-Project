@@ -33,8 +33,12 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Weapon")
 	ANightWeaponBase* CurrentWeapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TSubclassOf<ANightWeaponBase> PrevWeaponClass;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	ANightWeaponBase* PrevWeapon;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	int32 CurrentSlot;
 
@@ -62,7 +66,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void K2_SwitchWeapon();
 
-
+	UFUNCTION(BlueprintImplementableEvent)
+	void Interaction(const FInputActionValue& Value);
 
 
 private:
@@ -89,7 +94,7 @@ private:
 	void ESC(const FInputActionValue& Value);
 	void UsePotion(const FInputActionValue& Value);
 	void Throw(const FInputActionValue& Value);
-	void Interaction(const FInputActionValue& Value);
+
 	//End of InputAction
 
 

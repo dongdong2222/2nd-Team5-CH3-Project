@@ -52,6 +52,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Rolling")
 	FVector WorldRollingDirection;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rolling")
+	UAnimMontage* InPlaceMontage;
 
 public:
 	// ~UAnimInstance inteface
