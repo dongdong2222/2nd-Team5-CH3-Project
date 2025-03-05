@@ -121,14 +121,14 @@ void UNightPlayerAnimInstance::UpdateAim(float DeltaTime)
     EndPosition,
     ECC_GameTraceChannel1
   );
-  DrawDebugLine(
-    GetWorld(),
-    WorldPosition,
-    EndPosition,
-    FColor::Red,
-    false,
-    1.f
-  );
+  //DrawDebugLine(
+  //  GetWorld(),
+  //  WorldPosition,
+  //  EndPosition,
+  //  FColor::Red,
+  //  false,
+  //  1.f
+  //);
   USkeletalMeshComponent* Mesh = Character->GetMesh();
   FName SocketName = TEXT("WeaponSocket");
   if (Mesh && Mesh->DoesSocketExist(TEXT("WeaponSocket")))
@@ -144,14 +144,14 @@ void UNightPlayerAnimInstance::UpdateAim(float DeltaTime)
     //FRotator OutRotation;
     //Mesh->TransformToBoneSpace(FName(TEXT("hand_r")), FVector::ZeroVector, Direction.Rotation(), OutPosition, OutRotation);
     WorldWeaponRotation = Direction.Rotation();
-    DrawDebugLine(
-      GetWorld(),
-      Mesh->GetSocketLocation(SocketName),
-      EndPosition,
-      FColor::Blue,
-      false,
-      1.f
-    );
+    //DrawDebugLine(
+    //  GetWorld(),
+    //  Mesh->GetSocketLocation(SocketName),
+    //  EndPosition,
+    //  FColor::Blue,
+    //  false,
+    //  1.f
+    //);
   }
 
     

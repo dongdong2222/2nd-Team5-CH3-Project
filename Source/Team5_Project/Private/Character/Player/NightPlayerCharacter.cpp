@@ -119,6 +119,12 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     this,
     &ThisClass::Interaction
   );
+  EnhancedInput->BindAction(
+    PlayerController->ReloadAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::Reload
+  );
 }
 
 void ANightPlayerCharacter::Move(const FInputActionValue& Value)
@@ -206,7 +212,12 @@ void ANightPlayerCharacter::Rolling(const FInputActionValue& Value)
 
 void ANightPlayerCharacter::Reload(const FInputActionValue& Value)
 {
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
   //TODO : Gun->Reload();
+  UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+  if (!Anim) return;
+  Anim->Montage_Play(CurrentWeapon->ReloadMontage);
+  K2_Reload();
 }
 
 void ANightPlayerCharacter::Aim(const FInputActionValue& Value)
@@ -337,6 +348,10 @@ void ANightPlayerCharacter::OnMontageStart(UAnimMontage* Montage)
   {
     PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.Lock.Equip"));
   }
+  else if (Montage == CurrentWeapon->ReloadMontage)
+  {
+    PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.Lock.Reload"));
+  }
 }
 
 void ANightPlayerCharacter::OnMontageEnd(UAnimMontage* Montage, bool bInterrupted)
@@ -352,5 +367,9 @@ void ANightPlayerCharacter::OnMontageEnd(UAnimMontage* Montage, bool bInterrupte
   else if (Montage == CurrentWeapon->EqipMontage)
   {
     PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.Lock.Equip"));
+  }
+  else if (Montage == CurrentWeapon->ReloadMontage)
+  {
+    PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.Lock.Reload"));
   }
 }

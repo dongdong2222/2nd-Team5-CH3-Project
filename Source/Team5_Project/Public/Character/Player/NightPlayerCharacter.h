@@ -65,6 +65,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void K2_SwitchWeapon();
+	UFUNCTION(BlueprintImplementableEvent)
+	void K2_Reload();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Interaction(const FInputActionValue& Value);
