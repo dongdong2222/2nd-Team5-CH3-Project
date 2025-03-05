@@ -48,7 +48,7 @@ ETeamAttitude::Type ANightAIController::GetTeamAttitudeTowards(const AActor& Oth
 {
 	// 전달된 액터를 Pawn 타입으로 캐스팅
 	const APawn* PawnToCheck = Cast<const APawn>(&Other);
-
+	
 	// Pawn의 컨트롤러에서 Generic Team Agent 인터페이스를 가져옴
 	const IGenericTeamAgentInterface* OtherTeamAgent = Cast<IGenericTeamAgentInterface>(PawnToCheck->GetController());
 
@@ -70,6 +70,11 @@ void ANightAIController::OnEnemyPerceptionUpdated(AActor* Actor, FAIStimulus Sti
 	}
 	
 	if (static_cast<EEnemyState>(GetBlackboardComponent()->GetValueAsEnum(FName("State"))) == EEnemyState::Dead)
+	{
+		return;
+	}
+
+	if(PosseedAIPawn->IsDead == true)
 	{
 		return;
 	}

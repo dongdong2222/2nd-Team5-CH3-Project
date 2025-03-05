@@ -45,10 +45,6 @@ public:
 	// 플레이어를 볼 수 있는 상태인지 여부
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
 	bool CanSeePlayer;
-
-	// 적이 사망했는지 여부
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health")
-	bool IsDead;
 	
 	// 마지막 망치의 위치
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Misc")
