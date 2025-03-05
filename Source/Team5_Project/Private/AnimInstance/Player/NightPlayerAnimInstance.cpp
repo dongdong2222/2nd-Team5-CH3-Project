@@ -38,7 +38,18 @@ void UNightPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
     }
   }
+  if (Character)
+  {
+    if (GroundSpeed > 10.f)
+    {
+      Character->bUseControllerRotationYaw = true;
+    }
+    else
+    {
+      Character->bUseControllerRotationYaw = false;
 
+    }
+  }
 }
 
 void UNightPlayerAnimInstance::UpdateRotation()
