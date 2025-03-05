@@ -20,6 +20,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "weapon | Animation")
 	UAnimMontage* EqipMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "weapon | Animation")
+	UAnimMontage* ReloadMontage;
 	//End of Add Dongju
 
 	int32 MaxBullet;
