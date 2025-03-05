@@ -236,11 +236,11 @@ void ANightPlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
   if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
   float SwitchInput = Value.Get<float>();
   if (SwitchInput > 0) {
-    AddToCurrentSlot(1);
+    AddToCurrentSlot(-1);
   }
   else
   {
-    AddToCurrentSlot(-1);
+    AddToCurrentSlot(1);
   }
   K2_SwitchWeapon();
   //PrevWeapon = CurrentWeapon;
