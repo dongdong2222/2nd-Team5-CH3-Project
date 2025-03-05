@@ -17,12 +17,20 @@ ANightPlayerCharacter::ANightPlayerCharacter()
   //initialize QuickSlot
   QuickSlot.SetNum(3);
   CurrentSlot = 0;
+
 }
 
 
 void ANightPlayerCharacter::BeginPlay()
 {
   Super::BeginPlay();
+
+  CurrentWeapon = GetWorld()->SpawnActor<ANightWeaponBase>(
+    PrevWeaponClass,
+    FVector::ZeroVector,
+    FRotator::ZeroRotator
+  );
+
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
   if (!Anim) return;
   Anim->OnMontageStarted.AddDynamic(this, &ANightPlayerCharacter::OnMontageStart);
@@ -105,6 +113,12 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     this,
     &ThisClass::Aim
   );
+  EnhancedInput->BindAction(
+    PlayerController->InteractionAction,
+    ETriggerEvent::Triggered,
+    this,
+    &ThisClass::Interaction
+  );
 }
 
 void ANightPlayerCharacter::Move(const FInputActionValue& Value)
@@ -181,11 +195,10 @@ void ANightPlayerCharacter::Rolling(const FInputActionValue& Value)
   FRotator TargetRotation = TargetLocation.Rotation();
   TargetLocation.Normalize();
   TargetLocation = GetActorLocation() + TargetLocation * Cast<UNightPlayerDataAsset>(StatData)->GetRollingDistance();
-  
-
+   
   MotionWarpingComponent->AddOrUpdateWarpTargetFromLocation("RollTargetLocation", TargetLocation);
-  //MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollTargetRotation", TargetLocation, TargetRotation);
-  //MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollEndRotation", TargetLocation, PrevRotation);
+  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollTargetRotation", TargetLocation, TargetRotation);
+  MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation("RollEndRotation", TargetLocation, PrevRotation);
   Anim->Montage_Play(RollingMontage, 1.3f);
 
   //Anim->OnMontageEnded.AddDynamic(this, Montage);
@@ -257,11 +270,6 @@ void ANightPlayerCharacter::Throw(const FInputActionValue& Value)
   //TODO :  바로 던지는 모션 후 투척 무기 던지기
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
   Anim->Montage_Play(ThrowMontage);
-}
-
-void ANightPlayerCharacter::Interaction(const FInputActionValue& Value)
-{
-  //TODO : 상호작용이 가능한 상황일때 상호작용
 }
 
 
