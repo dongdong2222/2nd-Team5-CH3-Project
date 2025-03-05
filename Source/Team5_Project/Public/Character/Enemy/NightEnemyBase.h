@@ -60,6 +60,10 @@ public:
 	// Combat
 	UPROPERTY(BlueprintAssignable, Category = "Combat")
 	FOnAttackEnded OnAttackEnded;
+
+	// 적이 사망했는지 여부
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
+	bool IsDead;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	float Damage = 10.0f;

@@ -120,8 +120,6 @@ float ANightEnemyBase::TakeDamage(float DamageAmount, struct FDamageEvent const&
 	{
 		return 0.f;
 	}
-	// 체력 차감
-	Health -= ActualDamage;
 
 	UAnimInstance* AnimIns = GetMesh()->GetAnimInstance();
 	if (!AnimIns)
@@ -129,25 +127,36 @@ float ANightEnemyBase::TakeDamage(float DamageAmount, struct FDamageEvent const&
 		return ActualDamage;
 	}
 
+	if (IsDead)
+	{
+		return ActualDamage;
+	}
+
+	// 체력 차감
+	Health -= ActualDamage;
+	
 	// 체력이 0 이하라면 DeathMontage 재생
 	if (Health <= 0.f)
 	{
+		IsDead = true;
+		
 		if(DeathMontage)
 		{
-			if (AAIController* AIController = Cast<AAIController>(GetController()))
-			{
-				AIController->GetBlackboardComponent()->SetValueAsEnum(FName("State"),static_cast<uint8>(EEnemyState ::Dead));
-				if (AIController->BrainComponent)
-				{
-					AIController->BrainComponent->StopLogic(TEXT("Enemy is dead"));
-				}
-				
-				// 캐릭터의 콜리전 비활성화 
-				GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			}
-
 			AnimIns->Montage_Play(DeathMontage, 1.f);
 		}
+
+		if (AAIController* AIController = Cast<AAIController>(GetController()))
+		{
+			AIController->GetBlackboardComponent()->SetValueAsEnum(FName("State"),static_cast<uint8>(EEnemyState ::Dead));
+				
+			if (AIController->BrainComponent)
+			{
+				AIController->BrainComponent->StopLogic(TEXT("Enemy is dead"));
+			}
+		}
+		// 캐릭터의 콜리전 비활성화 
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		
 	}
 	// 체력이 남아있다면 피해 몽타주 재생 
 	else
