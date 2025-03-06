@@ -42,7 +42,8 @@ void ANightPlayerCharacter::BeginPlay()
   GetWorld()->GetTimerManager().SetTimer(
     SteminaTimer,
     [this]() {
-      UNightPlayerDataAsset* Data = Cast<UNightPlayerDataAsset>(StatData);
+      
+      TWeakObjectPtr<UNightPlayerDataAsset> Data = Cast<UNightPlayerDataAsset>(StatData);
       Data->SetStemina(Data->GetStemina() + 2.f);
     },
     0.5f,
@@ -94,6 +95,12 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     ETriggerEvent::Triggered,
     this,
     &ThisClass::Turn
+  );
+  EnhancedInput->BindAction(
+    PlayerController->SprintAction,
+    ETriggerEvent::Started,
+    this,
+    &ThisClass::StartOnceSprint
   );
   EnhancedInput->BindAction(
     PlayerController->SprintAction,
@@ -195,6 +202,22 @@ void ANightPlayerCharacter::SwitchCrouch(const FInputActionValue& Value)
   }
 }
 
+void ANightPlayerCharacter::StartOnceSprint(const FInputActionValue& Value)
+{
+  GetWorld()->GetTimerManager().SetTimer(
+    SprintTimer,
+    [this]() {
+
+      TWeakObjectPtr<UNightPlayerDataAsset> Data = Cast<UNightPlayerDataAsset>(StatData);
+      Data->SetStemina(Data->GetStemina() - 4.f);
+    },
+    0.3f,
+    true
+  );
+}
+
+
+
 void ANightPlayerCharacter::StartSprint(const FInputActionValue& Value)
 {
   if (auto* CharactorMovement = GetCharacterMovement())
@@ -211,6 +234,7 @@ void ANightPlayerCharacter::EndSprint(const FInputActionValue& Value)
   {
     const float WalkSpeed = Cast<UNightPlayerDataAsset>(StatData)->GetWalkSpeed();
     CharactorMovement->MaxWalkSpeed = WalkSpeed;
+    GetWorldTimerManager().ClearTimer(SprintTimer);
   }
 }
 
