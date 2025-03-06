@@ -6,6 +6,7 @@
 #include <Kismet/GameplayStatics.h>
 
 #include "Actors/NightDungeon_Doorway.h"
+#include "Character/Player/NightPlayerCharacter.h"
 
 ANightGameState::ANightGameState()
 {
@@ -62,6 +63,12 @@ void ANightGameState::IncreaseOverlapTriggerCount()
 
 void ANightGameState::LoadNextLevel()
 {
+    ANightPlayerCharacter* PlayerCharacter = Cast<ANightPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+    if (PlayerCharacter)
+    {
+        PlayerCharacter->GetWorldTimerManager().ClearTimer(PlayerCharacter->SteminaTimer);
+    }
+
     UNightGameInstance* GameInstance = Cast<UNightGameInstance>(GetGameInstance());
     if (GameInstance)
     {

@@ -49,6 +49,10 @@ void ANightPlayerCharacter::BeginPlay()
     true
     );
   StatData->SetHealth(StatData->GetMaxHealth());
+
+  UNightPlayerDataAsset* PlayerDataAsset = Cast<UNightPlayerDataAsset>(StatData);
+  PlayerDataAsset->SetStemina(PlayerDataAsset->GetMaxStemina());
+  
 }
 
 
