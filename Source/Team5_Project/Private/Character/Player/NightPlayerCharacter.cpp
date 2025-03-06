@@ -10,6 +10,7 @@
 #include "Weapon/NightWeaponBase.h"
 #include "DataAsset/FPlayerItemDataRow.h"
 #include "MotionWarpingComponent.h"
+#include "Kismet/GameplayStatics.h"
 //#include "AnimInstance/Player/NightPlayerAnimInstance.h"
 
 ANightPlayerCharacter::ANightPlayerCharacter()
@@ -37,7 +38,20 @@ void ANightPlayerCharacter::BeginPlay()
   Anim->OnMontageEnded.AddDynamic(this, &ANightPlayerCharacter::OnMontageEnd);
 
   GetCharacterMovement()->MaxWalkSpeed  = Cast<UNightPlayerDataAsset>(StatData)->GetWalkSpeed();
+
+  GetWorld()->GetTimerManager().SetTimer(
+    SteminaTimer,
+    [this]() {
+      UNightPlayerDataAsset* Data = Cast<UNightPlayerDataAsset>(StatData);
+      Data->SetStemina(Data->GetStemina() + 2.f);
+    },
+    0.5f,
+    true
+    );
+
 }
+
+
 
 float ANightPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
@@ -64,6 +78,12 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
     ETriggerEvent::Triggered,
     this,
     &ThisClass::Move
+  );
+  EnhancedInput->BindAction(
+    PlayerController->MoveAction,
+    ETriggerEvent::Completed,
+    this,
+    &ThisClass::EndMove
   );
   EnhancedInput->BindAction(
     PlayerController->TurnAction,
@@ -129,6 +149,7 @@ void ANightPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 void ANightPlayerCharacter::Move(const FInputActionValue& Value)
 {
+  if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock.Rolling"))) return;
   const FVector2D MoveInput = Value.Get<FVector2D>();
   if (!FMath::IsNearlyZero(MoveInput.X))
   {
@@ -141,6 +162,12 @@ void ANightPlayerCharacter::Move(const FInputActionValue& Value)
     Right.Yaw += 90.f;
     AddMovementInput(Right.Vector() , MoveInput.Y);
   }
+  bUseControllerRotationYaw = true;
+}
+
+void ANightPlayerCharacter::EndMove(const FInputActionValue& Value)
+{
+  bUseControllerRotationYaw = false;
 }
 
 void ANightPlayerCharacter::Turn(const FInputActionValue& Value)
@@ -188,8 +215,12 @@ void ANightPlayerCharacter::Rolling(const FInputActionValue& Value)
   //TODO : 원하는 방향으로 일정거리 구르기, 구르는 동안 타격받지 않음
   if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
   if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.UnLock.Crouch"))) return;
+  if (Cast<UNightPlayerDataAsset>(StatData)->GetStemina() < Cast<UNightPlayerDataAsset>(StatData)->GetDashCost()) return;
+  Cast<UNightPlayerDataAsset>(StatData)->SetStemina(Cast<UNightPlayerDataAsset>(StatData)->GetStemina() - Cast<UNightPlayerDataAsset>(StatData)->GetDashCost());
+
   UAnimInstance* Anim = GetMesh()->GetAnimInstance();
   if (!Anim) return;
+
 
 
   FVector TargetLocation = GetCharacterMovement()->Velocity;
@@ -236,11 +267,11 @@ void ANightPlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
   if (PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock"))) return;
   float SwitchInput = Value.Get<float>();
   if (SwitchInput > 0) {
-    AddToCurrentSlot(1);
+    AddToCurrentSlot(-1);
   }
   else
   {
-    AddToCurrentSlot(-1);
+    AddToCurrentSlot(1);
   }
   K2_SwitchWeapon();
   //PrevWeapon = CurrentWeapon;
@@ -317,6 +348,18 @@ void ANightPlayerCharacter::Dead(FVector Direction)
   PlayerMesh->AddImpulseToAllBodiesBelow(Impulse);
 }
 
+FVector ANightPlayerCharacter::GetTargetLocation()
+{
+  FIntPoint ScreenSize = GEngine->GameViewport->Viewport->GetSizeXY();
+  FVector2D ScreenCenter = { ScreenSize.X / 2.f, ScreenSize.Y / 2.f };
+  FVector WorldPosition;
+  FVector WorldDirection;
+  APlayerController* PlayerContoller = Cast<APlayerController>(GetController());
+  UGameplayStatics::DeprojectScreenToWorld(PlayerContoller, ScreenCenter, WorldPosition, WorldDirection);
+  FVector EndPosition = WorldPosition + WorldDirection * 1000;
+  return EndPosition;
+}
+
 void ANightPlayerCharacter::AddToCurrentSlot(float value)
 {
   int32 Temp = CurrentSlot + value;
@@ -339,6 +382,8 @@ void ANightPlayerCharacter::OnMontageStart(UAnimMontage* Montage)
   if (Montage == RollingMontage)
   {
     PlayerStateTags.AddTag(FGameplayTag::RequestGameplayTag("State.Lock.Rolling"));
+    bUseControllerRotationYaw = false;
+
   }
   else if (Montage == ThrowMontage)
   {
@@ -359,6 +404,7 @@ void ANightPlayerCharacter::OnMontageEnd(UAnimMontage* Montage, bool bInterrupte
   if (Montage == RollingMontage)
   {
     PlayerStateTags.RemoveTag(FGameplayTag::RequestGameplayTag("State.Lock.Rolling"));
+    bUseControllerRotationYaw = false;
   }
   else if (Montage == ThrowMontage)
   {

@@ -42,6 +42,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	int32 CurrentSlot;
 
+	FTimerHandle SteminaTimer;
+
 public:
 	UFUNCTION()
 	//Bind to Anim Notify
@@ -55,6 +57,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Dead(FVector Direction);
+
+	UFUNCTION(BlueprintCallable)
+	FVector GetTargetLocation();
 
 	ANightPlayerCharacter();
 	//~APawn interface
@@ -78,9 +83,11 @@ private:
 	UFUNCTION()
 	void OnMontageEnd(UAnimMontage* Montage, bool bInterrupted);
 
+
 	//InputAction
 	// - locomotion
 	void Move(const FInputActionValue& Value);
+	void EndMove(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void SwitchCrouch(const FInputActionValue& Value);
 	void StartSprint(const FInputActionValue& Value);

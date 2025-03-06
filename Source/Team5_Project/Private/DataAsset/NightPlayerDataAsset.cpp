@@ -3,6 +3,12 @@
 
 #include "DataAsset/NightPlayerDataAsset.h"
 
+UNightPlayerDataAsset::UNightPlayerDataAsset()
+  :Stemina(100.f), MaxStemina(100.f)
+{
+
+}
+
 float UNightPlayerDataAsset::GetStemina() const
 {
   return Stemina;
