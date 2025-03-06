@@ -11,6 +11,7 @@
 #include "DataAsset/NightCharacterDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Team5_Project/NightDebugHelper.h"
 
 ANightEnemyBase::ANightEnemyBase()
 {
@@ -133,10 +134,9 @@ float ANightEnemyBase::TakeDamage(float DamageAmount, struct FDamageEvent const&
 	}
 
 	// 체력 차감
-	Health -= ActualDamage;
-	
+	StatData->SetHealth(StatData->GetHealth() - DamageAmount);
 	// 체력이 0 이하라면 DeathMontage 재생
-	if (Health <= 0.f)
+	if (StatData->GetHealth() <= 0.f)
 	{
 		IsDead = true;
 		
@@ -167,7 +167,7 @@ float ANightEnemyBase::TakeDamage(float DamageAmount, struct FDamageEvent const&
 		}
 	}
 
-	return ActualDamage;
+	return StatData->GetHealth();
 }
 
 void ANightEnemyBase::MeleeAttack(FName Tag)
@@ -224,10 +224,11 @@ void ANightEnemyBase::BeginPlay()
 		CollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ANightEnemyBase::OnEndOverlap);	
 	}
 
-	/*if (StatData)
+	if (StatData)
 	{
-		StatData->GetMaxHealth();
-	}*/
+		StatData->SetHealth(StatData->GetMaxHealth());
+		Debug::Print(FString::Printf(TEXT("Health: %f"), StatData->GetHealth()));
+	}
 	
 }
 

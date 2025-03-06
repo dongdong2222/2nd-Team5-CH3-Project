@@ -47,7 +47,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI")
 	UBehaviorTree* BehaviorTreeToRun;
-
+	
 	//Avoidance 관련 변수들
 	UPROPERTY(EditDefaultsOnly, Category = "Detour Crowd Avoidance Config")
 	bool bEnableDetourCrowdAvoidance = true;
