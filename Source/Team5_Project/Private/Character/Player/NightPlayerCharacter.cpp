@@ -374,6 +374,11 @@ void ANightPlayerCharacter::Dead(FVector Direction)
 
   PlayerMesh->SetAllPhysicsLinearVelocity(FVector::ZeroVector);
   PlayerMesh->AddImpulseToAllBodiesBelow(Impulse);
+
+
+  GetWorldTimerManager().ClearTimer(SteminaTimer);
+  GetWorldTimerManager().ClearTimer(SprintTimer);
+
 }
 
 FVector ANightPlayerCharacter::GetTargetLocation()
