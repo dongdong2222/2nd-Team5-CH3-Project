@@ -11,7 +11,6 @@
 #include "DataAsset/NightCharacterDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Team5_Project/NightDebugHelper.h"
 
 ANightEnemyBase::ANightEnemyBase()
 {
@@ -227,7 +226,6 @@ void ANightEnemyBase::BeginPlay()
 	if (StatData)
 	{
 		StatData->SetHealth(StatData->GetMaxHealth());
-		Debug::Print(FString::Printf(TEXT("Health: %f"), StatData->GetHealth()));
 	}
 	
 }
