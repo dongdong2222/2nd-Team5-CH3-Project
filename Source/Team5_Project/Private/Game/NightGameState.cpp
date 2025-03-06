@@ -66,7 +66,8 @@ void ANightGameState::LoadNextLevel()
     ANightPlayerCharacter* PlayerCharacter = Cast<ANightPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
     if (PlayerCharacter)
     {
-        PlayerCharacter->GetWorldTimerManager().ClearTimer(PlayerCharacter->SteminaTimer);
+      PlayerCharacter->GetWorldTimerManager().ClearTimer(PlayerCharacter->SteminaTimer);
+      PlayerCharacter->GetWorldTimerManager().ClearTimer(PlayerCharacter->SprintTimer);
     }
 
     UNightGameInstance* GameInstance = Cast<UNightGameInstance>(GetGameInstance());
