@@ -42,6 +42,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	int32 CurrentSlot;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "TimerHandle")
 	FTimerHandle SteminaTimer;
 
 public:
