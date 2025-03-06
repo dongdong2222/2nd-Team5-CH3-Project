@@ -48,6 +48,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Aim")
 	FRotator WorldWeaponRotation;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "Aim")
+	FVector TargetLocation;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Rolling")
 	FVector WorldRollingDirection;

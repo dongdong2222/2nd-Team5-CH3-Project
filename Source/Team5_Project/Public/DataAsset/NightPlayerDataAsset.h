@@ -43,6 +43,9 @@ class TEAM5_PROJECT_API UNightPlayerDataAsset : public UNightCharacterDataAsset
 {
 	GENERATED_BODY()
 public:
+	UNightPlayerDataAsset();
+
+
 	float GetStemina() const;
 	void SetStemina(float value);
 

@@ -7,6 +7,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Debug/DebugDrawComponent.h"
+#include "Character/Player/NightPlayerCharacter.h"
 
 void UNightPlayerAnimInstance::NativeInitializeAnimation()
 {
@@ -38,18 +39,19 @@ void UNightPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
     }
   }
-  if (Character)
-  {
-    if (GroundSpeed > 10.f)
-    {
-      Character->bUseControllerRotationYaw = true;
-    }
-    else
-    {
-      Character->bUseControllerRotationYaw = false;
+  //if (Character)
+  //{
+  //  if (GroundSpeed < 10.f || !Cast<ANightPlayerCharacter>(Character)->PlayerStateTags.HasTag(FGameplayTag::RequestGameplayTag("State.Lock.Rolling")))
+  //  {
+  //    Character->bUseControllerRotationYaw = false;
+  //  }
+  //  else
+  //  {
+  //    Character->bUseControllerRotationYaw = true;
 
-    }
-  }
+  //  }
+  //}
+
 }
 
 void UNightPlayerAnimInstance::UpdateRotation()
@@ -138,6 +140,8 @@ void UNightPlayerAnimInstance::UpdateAim(float DeltaTime)
     {
       EndPosition = HitResult.ImpactPoint;
     }
+
+    TargetLocation = EndPosition;
     Direction = EndPosition - Mesh->GetSocketLocation(SocketName);
     Direction.X = - Direction.X;
     //FVector OutPosition;
