@@ -3,7 +3,9 @@
 
 #include "Character/Enemy/NightSevarog.h"
 
+#include "Character/Player/NightPlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Controller/Enemy/NightAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -23,7 +25,7 @@ void ANightSevarog::Fire_SoulSiphon()
 {
     FVector ActorLocation = GetActorLocation();
     FVector ForwardVector = GetActorForwardVector();
-    FVector LocationOffset = ForwardVector * 150.0f;
+    FVector LocationOffset = ForwardVector * 200.0f;
     FVector SpawnLocation = ActorLocation + LocationOffset;
     FRotator ActorRotation = GetActorRotation();
 
@@ -69,7 +71,7 @@ void ANightSevarog::Fire_SoulSiphon()
             AActor* HitActor = HitResult.GetActor();
 
             // HitActor가 ACharacter인지 확인 (필요한 경우)
-            ACharacter* HitCharacter = Cast<ACharacter>(HitActor);
+            ANightPlayerCharacter* HitCharacter = Cast<ANightPlayerCharacter>(HitActor);
             if (HitCharacter)
             {
                 // 데미지 가하기
