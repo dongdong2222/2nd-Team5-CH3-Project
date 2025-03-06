@@ -11,6 +11,8 @@
 #include "DataAsset/FPlayerItemDataRow.h"
 #include "MotionWarpingComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Game/NightGameMode.h"
+#include "Game/NightGameInstance.h"
 //#include "AnimInstance/Player/NightPlayerAnimInstance.h"
 
 ANightPlayerCharacter::ANightPlayerCharacter()
@@ -375,10 +377,24 @@ void ANightPlayerCharacter::Dead(FVector Direction)
   PlayerMesh->SetAllPhysicsLinearVelocity(FVector::ZeroVector);
   PlayerMesh->AddImpulseToAllBodiesBelow(Impulse);
 
-
   GetWorldTimerManager().ClearTimer(SteminaTimer);
   GetWorldTimerManager().ClearTimer(SprintTimer);
 
+  UWorld* World = GetWorld();
+  if (!World)
+  {
+      UE_LOG(LogTemp, Error, TEXT("Dead() failed: GetWorld() returned NULL!"));
+      return;
+  }
+
+  UNightPlayerDataAsset* PlayerDataAsset = Cast<UNightPlayerDataAsset>(StatData);
+  PlayerDataAsset->SetStemina(PlayerDataAsset->GetMaxStemina());
+
+  ANightGameMode* GM = Cast<ANightGameMode>(UGameplayStatics::GetGameMode(this));
+  if (GM)
+  {
+      GM->HandlePlayerDeath(this);
+  }
 }
 
 FVector ANightPlayerCharacter::GetTargetLocation()

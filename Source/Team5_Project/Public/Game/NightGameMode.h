@@ -15,4 +15,10 @@ class TEAM5_PROJECT_API ANightGameMode : public AGameMode
 	GENERATED_BODY()
 public:
 	ANightGameMode();
+
+	void HandlePlayerDeath(ACharacter* DeadCharacter);
+	void RestartLevel();
+
+private:
+	FTimerHandle AutoDeathTimer;
 };

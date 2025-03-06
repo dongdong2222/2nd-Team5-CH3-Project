@@ -37,6 +37,8 @@ public:
 	static const int32 MaxLevels = 2;
 
 public:
+	virtual void Init() override;
+
 	UFUNCTION(BlueprintCallable, Category = "GameData")
 	void AddDeathCount(int32 DeathCount); // 모든 레벨에서 죽은 횟수 더하기
 

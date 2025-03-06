@@ -19,6 +19,33 @@ UNightGameInstance::UNightGameInstance()
     }
 }
 
+void UNightGameInstance::Init()
+{
+    Super::Init();
+
+    UWorld* World = GetWorld();
+    if (World)
+    {
+        FString CurrentMapName = World->GetMapName();
+        UE_LOG(LogTemp, Warning, TEXT("GameInstance: Initial Map Name is %s"), *CurrentMapName);
+
+        int32 FoundIndex = LevelNames.Find(CurrentMapName);
+        if (FoundIndex != INDEX_NONE)
+        {
+            CurrentLevelIndex = FoundIndex;
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("GameInstance: Current Level not found in LevelNames array! Defaulting to index 0"));
+            CurrentLevelIndex = 0;
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("GameInstance: GetWorld() returned NULL!"));
+    }
+}
+
 void UNightGameInstance::AddDeathCount(int32 DeathCount)
 {
     LevelDeathCounts[CurrentLevelIndex] += DeathCount;
