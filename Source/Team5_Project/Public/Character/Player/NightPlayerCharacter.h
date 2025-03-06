@@ -44,6 +44,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "TimerHandle")
 	FTimerHandle SteminaTimer;
+	FTimerHandle SprintTimer;
 
 public:
 	UFUNCTION()
@@ -91,6 +92,7 @@ private:
 	void EndMove(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void SwitchCrouch(const FInputActionValue& Value);
+	void StartOnceSprint(const FInputActionValue& Value);
 	void StartSprint(const FInputActionValue& Value);
 	void EndSprint(const FInputActionValue& Value);
 	void Rolling(const FInputActionValue& Value);
