@@ -48,7 +48,7 @@ void ANightPlayerCharacter::BeginPlay()
     0.5f,
     true
     );
-
+  StatData->SetHealth(StatData->GetMaxHealth());
 }
 
 

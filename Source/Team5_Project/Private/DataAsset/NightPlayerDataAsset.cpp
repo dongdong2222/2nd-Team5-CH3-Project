@@ -4,7 +4,6 @@
 #include "DataAsset/NightPlayerDataAsset.h"
 
 UNightPlayerDataAsset::UNightPlayerDataAsset()
-  :Stemina(100.f), MaxStemina(100.f)
 {
 
 }
