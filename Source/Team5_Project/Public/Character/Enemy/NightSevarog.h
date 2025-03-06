@@ -57,11 +57,16 @@ public:
 	// 유령 손 파티클 시스템
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Emitter")
 	UParticleSystem* GhostHandParticleSystem;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widget")
+	 TSubclassOf<UUserWidget> VectorWidget;
 	
 	ANightSevarog();
-
+	
 	// 영혼 착취공격
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void Fire_SoulSiphon();
+
+	virtual void EnemyDeath(UAnimInstance* AnimIns) override;
 	
 };

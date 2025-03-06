@@ -3,6 +3,7 @@
 
 #include "Character/Enemy/NightSevarog.h"
 
+#include "Blueprint/UserWidget.h"
 #include "Character/Player/NightPlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Controller/Enemy/NightAIController.h"
@@ -19,6 +20,25 @@ ANightSevarog::ANightSevarog()
 	CollisionComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CollisionComponent"));
 	CollisionComponent->SetupAttachment(GetMesh(), TEXT("HammerCenter"));
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ANightSevarog::EnemyDeath(UAnimInstance* AnimIns)
+{
+    Super::EnemyDeath(AnimIns);
+
+    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (PlayerController)
+    {
+        if (VectorWidget)
+        {
+            UUserWidget* UserWidget = CreateWidget<UUserWidget>(PlayerController, VectorWidget);
+            if (UserWidget)
+            {
+                UserWidget->AddToViewport();
+            }
+        }
+    }
+    
 }
 
 void ANightSevarog::Fire_SoulSiphon()

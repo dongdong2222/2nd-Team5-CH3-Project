@@ -111,6 +111,28 @@ void ANightEnemyBase::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	bAlreadyDamaged = false;
 }
 
+void ANightEnemyBase::EnemyDeath(UAnimInstance* AnimIns)
+{
+	IsDead = true;
+		
+	if(DeathMontage)
+	{
+		AnimIns->Montage_Play(DeathMontage, 1.f);
+	}
+
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
+	{
+		AIController->GetBlackboardComponent()->SetValueAsEnum(FName("State"),static_cast<uint8>(EEnemyState ::Dead));
+				
+		if (AIController->BrainComponent)
+		{
+			AIController->BrainComponent->StopLogic(TEXT("Enemy is dead"));
+		}
+	}
+	// 캐릭터의 콜리전 비활성화 
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 float ANightEnemyBase::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                                   class AController* EventInstigator, AActor* DamageCauser)
 {
@@ -137,24 +159,7 @@ float ANightEnemyBase::TakeDamage(float DamageAmount, struct FDamageEvent const&
 	// 체력이 0 이하라면 DeathMontage 재생
 	if (StatData->GetHealth() <= 0.f)
 	{
-		IsDead = true;
-		
-		if(DeathMontage)
-		{
-			AnimIns->Montage_Play(DeathMontage, 1.f);
-		}
-
-		if (AAIController* AIController = Cast<AAIController>(GetController()))
-		{
-			AIController->GetBlackboardComponent()->SetValueAsEnum(FName("State"),static_cast<uint8>(EEnemyState ::Dead));
-				
-			if (AIController->BrainComponent)
-			{
-				AIController->BrainComponent->StopLogic(TEXT("Enemy is dead"));
-			}
-		}
-		// 캐릭터의 콜리전 비활성화 
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		EnemyDeath(AnimIns);
 		
 	}
 	// 체력이 남아있다면 피해 몽타주 재생 

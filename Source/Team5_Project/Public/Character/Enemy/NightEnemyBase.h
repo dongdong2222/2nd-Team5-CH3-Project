@@ -89,7 +89,10 @@ public:
 	// 콜리전 종료 시 호출되는 함수
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	
+
+	// 적이 죽었을때 호출되는 함수
+	virtual void EnemyDeath(UAnimInstance* AnimIns);
+
 	// 데미지를 받을 때 호출되는 함수
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
