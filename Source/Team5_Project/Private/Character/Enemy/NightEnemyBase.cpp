@@ -155,9 +155,9 @@ float ANightEnemyBase::TakeDamage(float DamageAmount, struct FDamageEvent const&
 	}
 
 	// 체력 차감
-	StatData->SetHealth(StatData->GetHealth() - DamageAmount);
+	Health -= DamageAmount;
 	// 체력이 0 이하라면 DeathMontage 재생
-	if (StatData->GetHealth() <= 0.f)
+	if (Health <= 0.f)
 	{
 		EnemyDeath(AnimIns);
 		
@@ -171,7 +171,7 @@ float ANightEnemyBase::TakeDamage(float DamageAmount, struct FDamageEvent const&
 		}
 	}
 
-	return StatData->GetHealth();
+	return Health;
 }
 
 void ANightEnemyBase::MeleeAttack(FName Tag)
@@ -230,7 +230,8 @@ void ANightEnemyBase::BeginPlay()
 
 	if (StatData)
 	{
-		StatData->SetHealth(StatData->GetMaxHealth());
+		MaxHealth =StatData->GetMaxHealth();
+		Health = MaxHealth;
 	}
 	
 }

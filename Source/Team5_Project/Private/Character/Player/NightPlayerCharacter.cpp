@@ -10,6 +10,7 @@
 #include "Weapon/NightWeaponBase.h"
 #include "DataAsset/FPlayerItemDataRow.h"
 #include "MotionWarpingComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Game/NightGameMode.h"
 #include "Game/NightGameInstance.h"
@@ -390,11 +391,25 @@ void ANightPlayerCharacter::Dead(FVector Direction)
   UNightPlayerDataAsset* PlayerDataAsset = Cast<UNightPlayerDataAsset>(StatData);
   PlayerDataAsset->SetStemina(PlayerDataAsset->GetMaxStemina());
 
-  ANightGameMode* GM = Cast<ANightGameMode>(UGameplayStatics::GetGameMode(this));
+  /*ANightGameMode* GM = Cast<ANightGameMode>(UGameplayStatics::GetGameMode(this));
   if (GM)
   {
       GM->HandlePlayerDeath(this);
+  }*/
+
+  APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+  if (PlayerController)
+  {
+    if (DeadWidget)
+    {
+      UUserWidget* UserWidget = CreateWidget<UUserWidget>(PlayerController, DeadWidget);
+      if (UserWidget)
+      {
+        UserWidget->AddToViewport();
+      }
+    }
   }
+  
 }
 
 FVector ANightPlayerCharacter::GetTargetLocation()

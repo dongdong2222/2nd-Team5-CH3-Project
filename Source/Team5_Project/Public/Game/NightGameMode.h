@@ -17,6 +17,8 @@ public:
 	ANightGameMode();
 
 	void HandlePlayerDeath(ACharacter* DeadCharacter);
+
+	UFUNCTION(BlueprintCallable, Category = "Game")
 	void RestartLevel();
 
 private:

@@ -41,11 +41,13 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	int32 CurrentSlot;
-
+		
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "TimerHandle")
 	FTimerHandle SteminaTimer;
 	FTimerHandle SprintTimer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> DeadWidget;
 public:
 	UFUNCTION()
 	//Bind to Anim Notify
@@ -78,7 +80,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void Interaction(const FInputActionValue& Value);
 
-
+	
 
 private:
 	UFUNCTION()
